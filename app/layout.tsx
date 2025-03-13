@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "Modern Platform",
+  title: "Score Lab",
   description: "A clean and modern Next.js application",
 }
 
