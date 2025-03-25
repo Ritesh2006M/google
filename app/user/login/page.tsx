@@ -1,22 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react"; // Back arrow icon
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {ArrowLeft} from "lucide-react";
 
 export default function LoginPage() {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleLogin = () => {
-        console.log("Logging in with:", email, password);
-        // Add authentication logic here
+    const handleLogin = async () => {
+
     };
+
 
     const handleGoogleLogin = () => {
         console.log("Sign in with Google");
@@ -30,7 +30,7 @@ export default function LoginPage() {
                 onClick={() => router.back()}
                 className="absolute top-4 left-4 flex items-center gap-2 text-gray-600 hover:text-black"
             >
-                <ArrowLeft size={20} />
+                <ArrowLeft size={20}/>
                 <span>Back</span>
             </button>
 
