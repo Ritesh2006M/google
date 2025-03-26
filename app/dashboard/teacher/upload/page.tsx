@@ -27,14 +27,82 @@ export default function UploadAssignment() {
     };
 
     const handleUpload = async () => {
-        if (!assignmentQuestion.trim()) return alert("Please enter an assignment question!");
-        if (!isAutoEvaluation && (criteria.length === 0 || criteria.some(c => !c.name.trim() || c.marks <= 0)))
-            return alert("Please add valid evaluation criteria!");
+        if (!assignmentQuestion.trim()) {
+            alert("Please enter an assignment question!");
+            return;
+        }
+
+        let criteriaText = "Unavailable"; // Default if no criteria
+        let formData = new FormData();
+
+        if (selectedFile) {
+            formData.append("file", selectedFile);
+        } else {
+            alert("Please select a file!");
+            return;
+        }
+
+        formData.append("question", assignmentQuestion);
+        formData.append("autoEval", String(isAutoEvaluation));
 
         if (isAutoEvaluation) {
-            alert(`Uploading ${selectedFile ? selectedFile.name : "No file"} with question: "${assignmentQuestion}" for Auto Evaluation (Max Marks: ${maxAutoMarks})...`);
+            criteriaText = "Evaluate based on yourself";
+            formData.append("totalMarks", String(maxAutoMarks));
         } else {
-            alert(`Uploading ${selectedFile ? selectedFile.name : "No file"} with question: "${assignmentQuestion}" and manual criteria...`);
+            if (criteria.length === 0 || criteria.some(c => !c.name.trim() || c.marks <= 0)) {
+                alert("Please add valid evaluation criteria!");
+                return;
+            }
+            criteriaText = criteria.map(c => `${c.name} for ${c.marks} marks`).join(", ");
+            formData.append("totalMarks", String(totalMarks));
+        }
+
+        formData.append("criteria", criteriaText);
+
+        // Log form data entries
+        console.log("📤 Sending FormData:");
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}:`, value);
+        }
+
+        try {
+            const response = await fetch("/api/upload-assignment", {
+                method: "POST",
+                body: formData,
+            });
+
+            console.log("🔍 API Response Status:", response.status);
+
+            let result;
+            try {
+                result = await response.json(); // Ensure response is JSON
+            } catch (jsonError) {
+                console.error("❌ JSON Parsing Error:", jsonError);
+                alert("Unexpected response format from server!");
+                return;
+            }
+
+            console.log("🔍 API Response Data:", result);
+
+            if (response.ok) {
+                alert("✅ Assignment uploaded successfully!");
+
+                // Reset form fields after successful upload
+                setAssignmentQuestion("");
+                setCriteria([{name: "", marks: 0}]);
+                setSelectedFile(null);
+                setTotalMarks(0);
+                setMaxAutoMarks(100);
+                setIsAutoEvaluation(false);
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = ""; // Reset file input field
+                }
+            } else {
+                alert(`❌ Upload failed: ${result.error}`);
+            }
+        } catch (error) {
+            console.error("❌ Upload error:", error);
+            alert("An error occurred while uploading the assignment.");
         }
     };
 
