@@ -14,15 +14,15 @@ export default function TeacherSidebar() {
     const pathname = usePathname();
 
     return (
-        <nav className="h-screen w-64 bg-black text-white p-5">
-            <h1 className="text-xl font-bold mb-6">Teacher Panel</h1>
+        <nav className="p-6">
+            <h1 className="text-xl font-bold mb-4">Teacher Panel</h1>
             <ul className="space-y-2">
                 {links.map(({ href, label, icon: Icon }) => (
                     <li key={href}>
                         <Link
                             href={href}
                             className={`flex items-center gap-2 p-2 rounded ${
-                                pathname === href ? "bg-white text-black font-semibold" : "hover:bg-gray-800"
+                                pathname === href ? "bg-black text-white" : "text-black hover:bg-gray-200"
                             }`}
                         >
                             <Icon size={20} />
