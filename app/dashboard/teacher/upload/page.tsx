@@ -11,7 +11,6 @@ import {Switch} from "@/components/ui/switch";
 import {useRef} from "react";
 
 
-
 export default function UploadAssignment() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [assignmentQuestion, setAssignmentQuestion] = useState("");
@@ -29,16 +28,16 @@ export default function UploadAssignment() {
 
     const handleUpload = async () => {
         if (!assignmentQuestion.trim()) return alert("Please enter an assignment question!");
-        if (!selectedFile) return alert("No file selected!");
         if (!isAutoEvaluation && (criteria.length === 0 || criteria.some(c => !c.name.trim() || c.marks <= 0)))
             return alert("Please add valid evaluation criteria!");
 
         if (isAutoEvaluation) {
-            alert(`Uploading ${selectedFile.name} with question: "${assignmentQuestion}" for Auto Evaluation (Max Marks: ${maxAutoMarks})...`);
+            alert(`Uploading ${selectedFile ? selectedFile.name : "No file"} with question: "${assignmentQuestion}" for Auto Evaluation (Max Marks: ${maxAutoMarks})...`);
         } else {
-            alert(`Uploading ${selectedFile.name} with question: "${assignmentQuestion}" and manual criteria...`);
+            alert(`Uploading ${selectedFile ? selectedFile.name : "No file"} with question: "${assignmentQuestion}" and manual criteria...`);
         }
     };
+
 
     const addCriteria = () => {
         setCriteria([...criteria, {name: "", marks: 0}]);
@@ -66,9 +65,10 @@ export default function UploadAssignment() {
     };
 
     return (
-        <div className="flex min-h-screen bg-white text-black">
+        <div className="flex h-screen bg-white text-black overflow-hidden">
             <TeacherSidebar/>
-            <main className="flex-1 p-8 bg-gray-100 min-h-screen">
+            <main className="flex-1 p-8 bg-gray-100 overflow-y-auto">
+
                 <Card className="mb-6 p-4">
                     <h1 className="text-3xl font-bold">Upload Assignment</h1>
                 </Card>
@@ -91,8 +91,6 @@ export default function UploadAssignment() {
                 </Card>
 
                 {/* File Upload */}
-
-
                 <Card className="mb-6 p-4">
                     {/* Label */}
                     <label className="text-lg font-semibold mb-2">
@@ -142,7 +140,6 @@ export default function UploadAssignment() {
 
                     {/* Separator for clear UI */}
                     <hr className="my-4 border-gray-300"/>
-
                     {isAutoEvaluation ? (
                         <div className="mt-4">
                             <label className="text-lg font-semibold mb-2">Max Auto Evaluation Marks</label>
