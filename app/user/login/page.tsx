@@ -16,31 +16,53 @@ export default function LoginPage() {
 
     const handleLogin = async () => {
         setError(""); // Reset previous error
-        const res = await fetch("/api/auth/login", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({email, password}),
-        });
 
-        const data = await res.json();
-        if (!data.success) {
-            setError(data.error);
-            return;
-        }
+        try {
+            const res = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({email, password}),
+            });
 
-        // Redirect based on role
-        switch (data.role) {
-            case "admin":
-                router.push("/dashboard/admin");
-                break;
-            case "teacher":
-                router.push("/dashboard/teacher");
-                break;
-            case "student":
-                router.push("/dashboard/student");
-                break;
-            default:
-                setError("Invalid role");
+            const data = await res.json();
+            console.log("Login Response:", data); // Debugging
+
+            if (!data.success) {
+                setError(data.error || "Login failed.");
+                return;
+            }
+
+            if (!data.email) {
+                console.error("Error: Email is missing from the response");
+                setError("Login failed: Email missing.");
+                return;
+            }
+
+            // Save user details
+            localStorage.setItem("user", JSON.stringify(data));
+
+            // If teacher details exist, store them
+            if (data.role === "teacher" && data.teacherData) {
+                localStorage.setItem("teacherDetails", JSON.stringify(data.teacherData));
+            }
+
+            // Redirect based on role
+            switch (data.role) {
+                case "admin":
+                    router.push("/dashboard/admin");
+                    break;
+                case "teacher":
+                    router.push("/dashboard/teacher");
+                    break;
+                case "student":
+                    router.push("/dashboard/student");
+                    break;
+                default:
+                    setError("Invalid role.");
+            }
+        } catch (error) {
+            console.error("Login request failed:", error);
+            setError("Login request failed.");
         }
     };
 

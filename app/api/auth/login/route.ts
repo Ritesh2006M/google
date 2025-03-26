@@ -4,10 +4,13 @@ import db from "@/lib/db";
 export async function POST(req: Request) {
     try {
         const { email, password } = await req.json();
+        if (!email || !password) {
+            return NextResponse.json({ success: false, error: "Email and password are required" });
+        }
 
         // Query the database to check credentials
         const [rows]: any = await db.query(
-            "SELECT role FROM user WHERE email = ? AND password = ?",
+            "SELECT email, role FROM user WHERE email = ? AND password = ?",
             [email, password]
         );
 
@@ -15,8 +18,30 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: false, error: "Invalid credentials" });
         }
 
-        return NextResponse.json({ success: true, role: rows[0].role });
+        const user = rows[0];
+
+        // Fetch teacher details if the role is "teacher"
+        let teacherData = null;
+        if (user.role === "teacher") {
+            const [teacherRows]: any = await db.query(
+                "SELECT id, email, rollNo, fullName, subject FROM teacherView WHERE email = ?",
+                [email]
+            );
+
+            if (teacherRows.length > 0) {
+                teacherData = teacherRows[0];
+            }
+        }
+
+        return NextResponse.json({
+            success: true,
+            email: user.email,
+            role: user.role,
+            teacherData, // Include teacher details if available
+        });
+
     } catch (error) {
+        console.error("Server error:", error);
         return NextResponse.json({ success: false, error: "Server error" });
     }
 }
