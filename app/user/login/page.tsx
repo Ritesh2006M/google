@@ -12,9 +12,36 @@ export default function LoginPage() {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
     const handleLogin = async () => {
+        setError(""); // Reset previous error
+        const res = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({email, password}),
+        });
 
+        const data = await res.json();
+        if (!data.success) {
+            setError(data.error);
+            return;
+        }
+
+        // Redirect based on role
+        switch (data.role) {
+            case "admin":
+                router.push("/dashboard/admin");
+                break;
+            case "teacher":
+                router.push("/dashboard/teacher");
+                break;
+            case "student":
+                router.push("/dashboard/student");
+                break;
+            default:
+                setError("Invalid role");
+        }
     };
 
 
