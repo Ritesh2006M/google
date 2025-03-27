@@ -61,6 +61,7 @@ export default function UploadAssignment() {
         const formData = new FormData();
         formData.append("assignmentQuestion", assignmentQuestion);
         formData.append("subject", teacher.subject);
+        formData.append("rollNo", teacher.rollNo);
         formData.append("criteria", JSON.stringify(formattedCriteria));
         formData.append("totalMarks", finalTotalMarks.toString()); // Ensuring correct total marks
         if (selectedFile) {
