@@ -37,7 +37,7 @@ export async function POST(req: Request) {
             success: true,
             email: user.email,
             role: user.role,
-            teacherData, // Include teacher details if available
+            teacherData,
         });
 
     } catch (error) {

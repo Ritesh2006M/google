@@ -1,104 +1,56 @@
-import {NextApiRequest, NextApiResponse} from "next";
-import {PrismaClient} from "@prisma/client";
-import {uploadFile} from "@/lib/googleStorage";
-import formidable from "formidable";
-import fs from "fs";
+import { NextResponse } from "next/server";
+import db from "@/lib/db";
+import { uploadFile } from "@/lib/googleStorage";
 
-const prisma = new PrismaClient();
-
-// Disable Next.js body parser to handle `multipart/form-data` manually
-export const config = {
-    api: {bodyParser: false},
-};
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    console.log("📩 Received request:", req.method);
-
-    if (req.method !== "POST") {
-        return res.status(405).json({error: "Method not allowed"});
-    }
-
+export async function POST(req: Request) {
     try {
-        const form = formidable({multiples: false, uploadDir: "/tmp", keepExtensions: true});
+        const formData = await req.formData(); // Parse FormData
+        console.log("Received FormData:", formData);
 
-        form.parse(req, async (err, fields, files) => {
-            if (err) {
-                console.error("❌ Form Parsing Error:", err);
-                return res.status(500).json({error: "Error parsing form data"});
-            }
+        // Extract fields (Fixed 'question' field)
+        const question = formData.get("assignmentQuestion")?.toString() || ""; // Fix here
+        const subject = formData.get("subject")?.toString() || "";
+        const criteria = formData.get("criteria")?.toString() || "";
+        const totalMarks = formData.get("totalMarks")?.toString() || "";
+        const file = formData.get("file") as File | null;
 
-            console.log("📋 Parsed Fields:", fields);
+        // Debugging: Check missing fields
+        console.log({ question, subject, criteria, totalMarks, file });
 
-            // Extract required fields
-            const {subject, question, criteria, totalMarks, autoEval} = fields;
+        // Identify which field is missing
+        const missingFields = [];
+        if (!question) missingFields.push("assignmentQuestion"); // Updated
+        if (!subject) missingFields.push("subject");
+        if (!criteria) missingFields.push("criteria");
+        if (!totalMarks) missingFields.push("totalMarks");
 
-            if (!question) {
-                return res.status(400).json({error: "Missing assignment question!"});
-            }
+        // Return error message if fields are missing
+        if (missingFields.length > 0) {
+            return NextResponse.json({
+                success: false,
+                error: `Missing required fields: ${missingFields.join(", ")}`
+            });
+        }
 
-            const isAutoEvaluation = autoEval === "true";
-            let criteriaText = "Unavailable"; // Default value
+        let pdfUrl = "";
 
-            if (isAutoEvaluation) {
-                criteriaText = "Evaluate based on yourself";
-            } else {
-                if (!criteria || criteria.length === 0) {
-                    return res.status(400).json({error: "Please provide evaluation criteria!"});
-                }
-                criteriaText = criteria as string;
-            }
+        // Handle file upload if a file is provided
+        if (file) {
+            console.log("Uploading file:", file.name);
+            const fileBuffer = Buffer.from(await file.arrayBuffer());
+            pdfUrl = await uploadFile(fileBuffer, file.name);
+        }
 
-            let fileUrl = "Unavailable"; // Default if no file uploaded
+        // Insert data into MySQL `task` table
+        await db.query(
+            "INSERT INTO task (subject, question, criteria, total_marks, pdf_location_url) VALUES (?, ?, ?, ?, ?)",
+            [subject, question, criteria, totalMarks, pdfUrl]
+        );
 
-            if (files.file) {
-                const file = files.file[0];
+        return NextResponse.json({ success: true, message: "Assignment uploaded successfully!" });
 
-                if (file.size > 0) {
-                    console.log("📂 File received:", file.originalFilename, "Size:", file.size);
-
-                    try {
-                        const fileBuffer = fs.readFileSync(file.filepath);
-                        console.log("⏫ Uploading file...");
-                        fileUrl = await uploadFile(fileBuffer, file.originalFilename || "uploaded.pdf");
-                        console.log("✅ File uploaded successfully:", fileUrl);
-
-                        fs.unlinkSync(file.filepath); // Delete temp file
-                    } catch (uploadError) {
-                        console.error("❌ File Upload Error:", uploadError);
-                    }
-                } else {
-                    console.warn("⚠️ No valid file received!");
-                }
-            }
-
-            // Validate and store in the database
-            try {
-                console.log("🛢 Storing in database...");
-                const task = await prisma.task.create({
-                    data: {
-                        subject: subject as string,
-                        question: question as string,
-                        criteria: criteriaText,
-                        total_marks: parseInt(totalMarks as string, 10) || 0,
-                        auto_eval: isAutoEvaluation,
-                        pdf_location_url: fileUrl,
-                    },
-                });
-
-                console.log("✅ Task stored:", task);
-                return res.status(200).json({success: true, task});
-            } catch (dbError) {
-                console.error("❌ Database Error:", dbError);
-
-                return res.status(500).json({
-                    error: "Database error",
-                    details: dbError instanceof Error ? dbError.message : "Unknown error",
-                });
-            }
-
-        });
     } catch (error) {
-        console.error("❌ Server Error:", error);
-        return res.status(500).json({error: "Internal server error"});
+        console.error("Upload error:", error);
+        return NextResponse.json({ success: false, error: "Server error" });
     }
-};
+}

@@ -1,23 +1,24 @@
-import {Storage} from "@google-cloud/storage";
+import { Storage } from "@google-cloud/storage";
+import fs from "fs";
+import path from "path";
+
+// Load service account key file
+const keyFilePath = path.resolve("/home/ritesh/Desktop/google/rough/service.json"); // Update this path if needed
 
 const storage = new Storage({
-    credentials: {
-        client_email: process.env.GOOGLE_CLOUD_CLIENT_EMAIL,
-        private_key: process.env.GOOGLE_CLOUD_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-    },
-    projectId: process.env.GOOGLE_CLOUD_PROJECT,
+    keyFilename: keyFilePath, // Use the key file for authentication
 });
 
-const bucketName = process.env.GCS_BUCKET_NAME!;
+const bucketName = "uploadhw"; // Replace with your actual bucket name
 const bucket = storage.bucket(bucketName);
 
-export async function uploadFile(file: File) {
-    const fileName = `${Date.now()}-${file.name}`;
-    const fileRef = bucket.file(fileName);
+export async function uploadFile(fileBuffer: Buffer, fileName: string) {
+    const uniqueFileName = `${Date.now()}-${fileName}`;
+    const fileRef = bucket.file(uniqueFileName);
 
-    await fileRef.save(Buffer.from(await file.arrayBuffer()), {
-        metadata: {contentType: file.type},
+    await fileRef.save(fileBuffer, {
+        metadata: { contentType: "application/pdf" },
     });
 
-    return `https://storage.googleapis.com/${bucketName}/${fileName}`;
+    return `https://storage.googleapis.com/${bucketName}/${uniqueFileName}`;
 }
