@@ -1,7 +1,7 @@
 "use client";
 
 import TeacherSidebar from "../sidebar";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Card} from "@/components/ui/card";
@@ -9,6 +9,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Trash} from "lucide-react";
 import {Switch} from "@/components/ui/switch";
 import {useRef} from "react";
+import {useRouter} from "next/navigation";
 
 
 export default function UploadAssignment() {
@@ -19,6 +20,15 @@ export default function UploadAssignment() {
     const [isAutoEvaluation, setIsAutoEvaluation] = useState(false);
     const [maxAutoMarks, setMaxAutoMarks] = useState(100);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [teacher, setTeacher] = useState<{ fullName: string; subject: string; rollNo?: string } | null>(null);
+
+    useEffect(() => {
+        // Fetch teacher details from localStorage
+        const storedTeacher = localStorage.getItem("teacherDetails");
+        if (storedTeacher) {
+            setTeacher(JSON.parse(storedTeacher));
+        }
+    }, []);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -26,14 +36,12 @@ export default function UploadAssignment() {
         }
     };
 
+
     const handleUpload = async () => {
         if (!assignmentQuestion.trim()) {
             alert("Please enter an assignment question.");
             return;
         }
-
-        // Get subject from local storage
-        const subject = "maths";
 
         // Set total marks based on evaluation type
         let finalTotalMarks = isAutoEvaluation ? maxAutoMarks : totalMarks;
@@ -52,7 +60,7 @@ export default function UploadAssignment() {
         // Prepare FormData for file upload & other data
         const formData = new FormData();
         formData.append("assignmentQuestion", assignmentQuestion);
-        formData.append("subject", subject);
+        formData.append("subject", teacher.subject);
         formData.append("criteria", JSON.stringify(formattedCriteria));
         formData.append("totalMarks", finalTotalMarks.toString()); // Ensuring correct total marks
         if (selectedFile) {
