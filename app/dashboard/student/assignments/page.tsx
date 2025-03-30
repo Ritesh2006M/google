@@ -53,7 +53,7 @@ export default function StudentAssignments() {
                 const email = userData.email; // Extract email correctly
                 console.log("Fetching assignments for:", email);
 
-                const response = await fetch(`/api/getAssignments?email=${encodeURIComponent(email)}`);
+                const response = await fetch(`/api/student/getAssignments?email=${encodeURIComponent(email)}`);
                 if (!response.ok) throw new Error("Failed to fetch assignments");
 
                 const data = await response.json();
@@ -97,7 +97,7 @@ export default function StudentAssignments() {
             formData.append("rollNo", userData.studentData.rollNo);
             formData.append("file", selectedFile);
 
-            const response = await fetch("/api/uploadAssignment", {
+            const response = await fetch("/api/student/uploadAssignment", {
                 method: "POST",
                 body: formData,
             });
