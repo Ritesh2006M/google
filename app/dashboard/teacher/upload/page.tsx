@@ -58,7 +58,9 @@ export default function UploadAssignment() {
         // Prepare FormData for file assignments & other data
         const formData = new FormData();
         formData.append("assignmentQuestion", assignmentQuestion);
+        // @ts-ignore
         formData.append("subject", teacher.subject);
+        // @ts-ignore
         formData.append("rollNo", teacher.rollNo);
         formData.append("criteria", JSON.stringify(formattedCriteria));
         formData.append("totalMarks", finalTotalMarks.toString()); // Ensuring correct total marks

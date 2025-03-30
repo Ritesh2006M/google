@@ -1,7 +1,8 @@
 "use client";
 
 import Sidebar from "../sidebar";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
+import {Card} from "@/components/ui/card";
 
 interface Assignment {
     id: number;
@@ -32,10 +33,15 @@ export default function StudentAssignments() {
     }, []);
 
     return (
-        <div className="flex min-h-screen bg-white text-black">
-            <Sidebar />
-            <main className="flex-1 p-6">
-                <h1 className="text-2xl font-bold mb-4">Available Assignments</h1>
+        <div className="flex h-screen bg-white text-black overflow-hidden">
+
+            <div className="bg-white w-64 shadow-md">
+                <Sidebar/>
+            </div>
+            <main className="flex-1 p-8 bg-gray-100 overflow-y-auto">
+                <Card className="mb-6 p-4">
+                    <h1 className="text-2xl font-bold mb-4">Available Assignments</h1>
+                </Card>
 
                 {loading ? (
                     <p>Loading assignments...</p>
@@ -44,7 +50,7 @@ export default function StudentAssignments() {
                 ) : (
                     <div className="space-y-4">
                         {assignments.map((assignment) => (
-                            <div key={assignment.id} className="p-4 border rounded-lg shadow-md">
+                            <Card className="mb-6 p-4">
                                 <h2 className="text-xl font-semibold">{assignment.subject_name}</h2>
                                 <p className="text-gray-700">{assignment.question}</p>
                                 <p><strong>Marks:</strong> {assignment.total_marks}</p>
@@ -54,7 +60,7 @@ export default function StudentAssignments() {
                                         View Assignment
                                     </a>
                                 )}
-                            </div>
+                            </Card>
                         ))}
                     </div>
                 )}
