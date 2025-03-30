@@ -35,6 +35,7 @@ export async function DELETE(req: NextRequest) {
 
         const [result] = await db.query("DELETE FROM task WHERE id = ?", [id]);
 
+        // @ts-ignore
         if (result.affectedRows === 0) {
             return NextResponse.json({success: false, error: "Task not found"}, {status: 404});
         }
@@ -59,6 +60,7 @@ export async function PUT(req: NextRequest) {
 
         const [result] = await db.query("UPDATE task SET status = ? WHERE id = ?", [newStatus, id]);
 
+        // @ts-ignore
         if (result.affectedRows === 0) {
             return NextResponse.json({success: false, error: "Task not found"}, {status: 404});
         }

@@ -44,6 +44,8 @@ export default function LoginPage() {
             // If teacher details exist, store them
             if (data.role === "teacher" && data.teacherData) {
                 localStorage.setItem("teacherDetails", JSON.stringify(data.teacherData));
+            } else if (data.role === "student" && data.studentData) {
+                localStorage.setItem("studentDetails", JSON.stringify(data.studentData));
             }
 
             // Redirect based on role
