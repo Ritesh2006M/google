@@ -9,7 +9,6 @@ import {Textarea} from "@/components/ui/textarea";
 import {Trash} from "lucide-react";
 import {Switch} from "@/components/ui/switch";
 import {useRef} from "react";
-import {useRouter} from "next/navigation";
 
 
 export default function UploadAssignment() {
@@ -51,9 +50,8 @@ export default function UploadAssignment() {
         if (isAutoEvaluation) {
             formattedCriteria = [{name: "Auto evaluate based on question and answer", marks: maxAutoMarks}];
         } else {
-            formattedCriteria = criteria.map((crit, index) => ({
-                name: `Criterion ${index + 1} for ${crit.marks} marks`,
-                marks: crit.marks
+            formattedCriteria = criteria.map((crit) => ({
+                name: `${crit.name} for ${crit.marks} marks, `
             }));
         }
 
@@ -69,7 +67,7 @@ export default function UploadAssignment() {
         }
 
         try {
-            const response = await fetch("/api/upload-assignment", {
+            const response = await fetch("/api/teacher/upload-assignment", {
                 method: "POST",
                 body: formData
             });
@@ -121,7 +119,9 @@ export default function UploadAssignment() {
 
     return (
         <div className="flex h-screen bg-white text-black overflow-hidden">
-            <TeacherSidebar/>
+            <div className="bg-white w-64 shadow-md">
+                <TeacherSidebar/>
+            </div>
             <main className="flex-1 p-8 bg-gray-100 overflow-y-auto">
 
                 <Card className="mb-6 p-4">

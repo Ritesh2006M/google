@@ -42,7 +42,7 @@ export default function TeacherTasks() {
 
     const fetchTasks = async (rollNo: string) => {
         try {
-            const response = await fetch(`/api/tasks?rollNo=${encodeURIComponent(rollNo)}`);
+            const response = await fetch(`/api/teacher/tasks?rollNo=${encodeURIComponent(rollNo)}`);
             if (!response.ok) throw new Error("Failed to fetch tasks");
 
             const data = await response.json();
@@ -63,7 +63,7 @@ export default function TeacherTasks() {
         const newStatus = !currentStatus; // Toggle status
 
         try {
-            const response = await fetch(`/api/tasks`, {
+            const response = await fetch(`/api/teacher/tasks`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ id: taskId, status: newStatus }),
@@ -88,7 +88,7 @@ export default function TeacherTasks() {
         if (!confirm("Are you sure you want to delete this task?")) return;
 
         try {
-            const response = await fetch(`/api/tasks?id=${taskId}`, { method: "DELETE" });
+            const response = await fetch(`/api/teacher/tasks?id=${taskId}`, { method: "DELETE" });
 
             const data = await response.json();
             if (data.success) {
