@@ -35,7 +35,7 @@ export async function POST(req: Request) {
 
         let pdfUrl = "";
 
-        // Handle file upload if a file is provided
+        // Handle file assignments if a file is provided
         if (file) {
             console.log("Uploading file:", file.name);
             const fileBuffer = Buffer.from(await file.arrayBuffer());

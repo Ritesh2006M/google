@@ -76,7 +76,7 @@ export default function LoginPage() {
         <div className="flex min-h-screen items-center justify-center px-4">
             {/* Back Button */}
             <button
-                onClick={() => router.back()}
+                onClick={() => router.push('/')}
                 className="absolute top-4 left-4 flex items-center gap-2 text-gray-600 hover:text-black"
             >
                 <ArrowLeft size={20}/>

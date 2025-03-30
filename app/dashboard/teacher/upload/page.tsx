@@ -55,7 +55,7 @@ export default function UploadAssignment() {
             }));
         }
 
-        // Prepare FormData for file upload & other data
+        // Prepare FormData for file assignments & other data
         const formData = new FormData();
         formData.append("assignmentQuestion", assignmentQuestion);
         formData.append("subject", teacher.subject);
@@ -75,7 +75,7 @@ export default function UploadAssignment() {
             const result = await response.json();
             if (result.success) {
                 alert("Assignment uploaded successfully!");
-                // Reset fields after successful upload
+                // Reset fields after successful assignments
                 setSelectedFile(null);
                 setAssignmentQuestion("");
                 setCriteria([{name: "", marks: 0}]);
