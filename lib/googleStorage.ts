@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 // Load service account key file
-const keyFilePath = path.resolve("/home/ritesh/Desktop/google/rough/service.json"); // Update this path if needed
+const keyFilePath = path.resolve("./rough/service.json");
 
 const storage = new Storage({
     keyFilename: keyFilePath, // Use the key file for authentication
