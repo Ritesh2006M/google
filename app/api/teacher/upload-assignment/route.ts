@@ -48,6 +48,8 @@ export async function POST(req: Request) {
             [subject, question, criteria, totalMarks, pdfUrl, rollNo]
         );
 
+        // cloud trigger add here
+
         return NextResponse.json({success: true, message: "Assignment uploaded successfully!"});
 
     } catch (error) {
