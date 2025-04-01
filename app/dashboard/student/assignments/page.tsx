@@ -4,7 +4,6 @@ import Sidebar from "../sidebar";
 import {useEffect, useState} from "react";
 import {Card} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter} from "@/components/ui/dialog";
 
@@ -15,7 +14,9 @@ interface Assignment {
     question: string;
     total_marks: number;
     pdf_location_url: string | null;
+    is_submitted: boolean;
 }
+
 
 interface UserData {
     email: string;
@@ -147,9 +148,16 @@ export default function StudentAssignments() {
                                 </div>
                                 <Button
                                     onClick={() => openModal(assignment)}
-                                    className="mt-4 w-full bg-black text-white hover:bg-gray-800">
-                                    Upload Assignment
+                                    className={`mt-4 w-full text-white ${
+                                        assignment.is_submitted
+                                            ? "bg-gray-400 cursor-not-allowed"
+                                            : "bg-black hover:bg-gray-800"
+                                    }`}
+                                    disabled={assignment.is_submitted}
+                                >
+                                    {assignment.is_submitted ? "Already Submitted" : "Upload Assignment"}
                                 </Button>
+
                             </Card>
                         ))}
                     </div>
