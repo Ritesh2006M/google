@@ -36,3 +36,5 @@ next-env.d.ts
 # Miscellaneous
 .DS_Store
 Thumbs.db
+
+autoCom.js
