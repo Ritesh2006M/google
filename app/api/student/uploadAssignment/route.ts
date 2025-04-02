@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import db from "@/lib/db"; // MySQL Database connection
-import {uploadFile} from "@/lib/googleStorage"; // Google Cloud Storage function
+import {uploadFile} from "@/lib/googleStorage";
+import {processDocumentAI} from "@/app/api/general/ocr"; // Google Cloud Storage function
 
 export async function POST(req: Request) {
     try {
@@ -27,11 +28,15 @@ export async function POST(req: Request) {
 
         // Upload to Google Cloud Storage & get the file URL
         const pdfUrl = await uploadFile(fileBuffer, file.name);
+        let pdftext = "";
+        if (file) {
+            pdftext = await processDocumentAI(file)
+        }
 
         // Insert data into MySQL `assignment` table without pdf_text
         await db.query(
-            "INSERT INTO assignment (task_id, roll_no, pdf_url, pdf_text) VALUES (?, ?, ?, NULL)",
-            [taskId, rollNo, pdfUrl]
+            "INSERT INTO assignment (task_id, roll_no, pdf_url, pdf_text) VALUES (?, ?, ?, ?)",
+            [taskId, rollNo, pdfUrl, pdftext]
         );
 
         return NextResponse.json({success: true, message: "Assignment uploaded successfully!"});

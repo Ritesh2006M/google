@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import db from "@/lib/db";
 import {uploadFile} from "@/lib/googleStorage";
+import {processDocumentAI} from "@/app/api/general/ocr";
 
 export async function POST(req: Request) {
     try {
@@ -34,18 +35,20 @@ export async function POST(req: Request) {
         }
 
         let pdfUrl = "";
+        let pdftext = "";
 
         // Handle file assignments if a file is provided
         if (file) {
             console.log("Uploading file:", file.name);
             const fileBuffer = Buffer.from(await file.arrayBuffer());
             pdfUrl = await uploadFile(fileBuffer, file.name);
+            pdftext = await processDocumentAI(file)
         }
 
-        // Insert data into MySQL `task` table
+        // Insert assignment data into the database.
         await db.query(
-            "INSERT INTO task (subject, question, criteria, total_marks, pdf_location_url, rollNo) VALUES (?, ?, ?, ?, ?, ?)",
-            [subject, question, criteria, totalMarks, pdfUrl, rollNo]
+            "INSERT INTO task (subject, question, criteria, total_marks, pdf_location_url, rollNo, pdf_text) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [subject, question, criteria, totalMarks, pdfUrl, rollNo, pdftext]
         );
 
         // cloud trigger add here
