@@ -1,6 +1,6 @@
 "use client";
 
-import Sidebar from "../sidebar";
+import Sidebar from "../components/sidebar";
 import {useEffect, useState} from "react";
 import {Card} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";

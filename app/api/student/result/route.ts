@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
                    r.task_id,
                    r.result,
                    r.response,
+                   t.total_marks AS total_marks,
                    t.subject AS subject_name,
                    t.question
             FROM result r

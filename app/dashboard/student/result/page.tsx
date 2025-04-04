@@ -1,6 +1,6 @@
 "use client";
 
-import Sidebar from "../sidebar";
+import Sidebar from "../components/sidebar";
 import {useEffect, useState} from "react";
 import {Card} from "@/components/ui/card";
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog";
@@ -10,6 +10,7 @@ import Image from "next/image";
 interface Result {
     assignment_id: number;
     task_id: number;
+    total_marks: number;
     subject_name: string;
     question: string;
     result: number;
@@ -78,7 +79,10 @@ export default function StudentResult() {
                                 <h2 className="text-xl font-semibold text-black">{res.subject_name}</h2>
                                 <p className="text-gray-700 mt-2">{res.question}</p>
                                 <p className="text-black mt-4">
-                                    <strong>Marks Scored:</strong> {res.result}
+                                    <strong>Marks Scored:</strong> {res.result} / {res.total_marks}
+                                    <span className="ml-2 text-sm text-gray-600">
+                                        ({((res.result / res.total_marks) * 100).toFixed(2)}%)
+                                    </span>
                                 </p>
                                 <Button
                                     className="mt-4"
@@ -102,7 +106,7 @@ export default function StudentResult() {
                                 </DialogTitle>
                                 <span className="text-sm text-gray-500">Powered by</span>
                                 <Image
-                                    src="/geminiLogo.png" // Ensure the image is in the public folder
+                                    src="/geminiLogo.png"
                                     alt="Gemini Logo"
                                     width={80}
                                     height={20}
