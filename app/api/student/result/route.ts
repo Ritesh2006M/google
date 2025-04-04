@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
                    r.task_id,
                    r.result,
                    r.response,
-                   t.subject,
+                   t.subject AS subject_name,
                    t.question
             FROM result r
                      JOIN task t ON r.task_id = t.id
