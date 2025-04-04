@@ -8,6 +8,7 @@ import {FilePlus, ClipboardCheck, Home, LogOut, FileText} from "lucide-react";
 const links = [
     {href: "/dashboard/student", label: "Dashboard", icon: Home},
     {href: "/dashboard/student/assignments", label: "Assignments", icon: FilePlus},
+    {href: "/dashboard/student/result", label: "Result", icon: FilePlus},
 ];
 
 export default function StudentSidebar() {

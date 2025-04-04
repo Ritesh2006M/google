@@ -1,20 +1,22 @@
-import { NextResponse } from "next/server";
-import db from "@/lib/db"; // MySQL Database connection
-import { uploadFile } from "@/lib/googleStorage";
-import { processDocumentAI } from "@/app/api/general/ocr"; // Google Cloud Storage function
+import {NextResponse} from "next/server";
+import db from "@/lib/db";
+import {uploadFile} from "@/lib/googleStorage";
+import {processDocumentAI} from "@/app/api/general/ocr";
 
 // Function to send assignmentId to an external API
 async function sendAssignmentId(assignmentId: number) {
     try {
-        console.log(`🔹 Sending assignmentId: ${assignmentId} to external API...`);
+        console.log(`Sending assignmentId: ${assignmentId} to external API...`);
 
-        const response = await fetch("https://us-central1-mineral-subject-450718-j1.cloudfunctions.net/evaluateAnswer", {
+        const projectId = process.env.GCP_PROJECT_ID;
+        const response = await fetch(`https://us-central1-${projectId}.cloudfunctions.net/evaluateAnswer`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ assignmentId }), // Send JSON payload
+            body: JSON.stringify({assignmentId}),
         });
+
 
         // Ensure response is valid before parsing JSON
         if (!response.ok) {
@@ -49,7 +51,10 @@ export async function POST(req: Request) {
 
         if (missingFields.length > 0) {
             console.warn("⚠️ Missing fields:", missingFields.join(", "));
-            return NextResponse.json({ success: false, error: `Missing fields: ${missingFields.join(", ")}` }, { status: 400 });
+            return NextResponse.json({
+                success: false,
+                error: `Missing fields: ${missingFields.join(", ")}`
+            }, {status: 400});
         }
 
         console.log(`📤 Uploading file: ${file.name} (Size: ${file.size} bytes)`);
@@ -75,21 +80,21 @@ export async function POST(req: Request) {
             console.log(`✅ Assignment inserted with ID: ${assignmentId}`);
         } catch (dbError) {
             console.error("❌ Database Insertion Error:", dbError);
-            return NextResponse.json({ success: false, error: "Database error" }, { status: 500 });
+            return NextResponse.json({success: false, error: "Database error"}, {status: 500});
         }
 
         if (!assignmentId) {
             console.error("❌ Failed to retrieve assignmentId");
-            return NextResponse.json({ success: false, error: "Assignment ID not found" }, { status: 500 });
+            return NextResponse.json({success: false, error: "Assignment ID not found"}, {status: 500});
         }
 
         // Send assignmentId to external API (Google Cloud Function)
         await sendAssignmentId(assignmentId);
 
-        return NextResponse.json({ success: true, message: "Assignment uploaded successfully!" });
+        return NextResponse.json({success: true, message: "Assignment uploaded successfully!"});
 
     } catch (error) {
         console.error("❌ Server Error:", error);
-        return NextResponse.json({ success: false, error: "Server error" }, { status: 500 });
+        return NextResponse.json({success: false, error: "Server error"}, {status: 500});
     }
 }
