@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import {useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
+import {Card, CardHeader, CardTitle, CardContent} from "@/components/ui/card";
+import {Button} from "@/components/ui/button";
 
 interface Props {
     email: string;
 }
 
-export default function StudentTasksChart({ email }: Props) {
+export default function StudentTasksChart({email}: Props) {
     const router = useRouter();
     const [pending, setPending] = useState<number | null>(null);
     const [total, setTotal] = useState<number | null>(null);
@@ -33,7 +33,7 @@ export default function StudentTasksChart({ email }: Props) {
     if (pending === null || total === null || completed === null) return null;
 
     return (
-        <Card className="shadow-md mb-6 rounded-lg bg-white">
+        <Card className="shadow-md mb-6 rounded-lg bg-white h-[310px]">
             <CardHeader className="text-center">
                 <CardTitle className="text-xl font-semibold text-black">Assignment Overview</CardTitle>
             </CardHeader>
@@ -62,7 +62,7 @@ export default function StudentTasksChart({ email }: Props) {
                 <div className="mt-8 flex justify-center">
                     <Button
                         variant="default"
-                        className="bg-black text-white border border-black hover:bg-gray-800 transition-all"
+                        className="bg-white text-black border  hover:bg-black hover:text-white transition-all"
                         onClick={() => router.push("/dashboard/student/assignments")}
                     >
                         Go to Assignments

@@ -46,7 +46,7 @@ export default function StudentPerformanceChart({rollNo}: Props) {
                 <CardTitle className="text-xl">Performance Overview</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col items-center">
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={165}>
                     <PieChart>
                         <Pie
                             data={chartData}

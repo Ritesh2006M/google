@@ -8,7 +8,7 @@ import {Label} from "@/components/ui/label";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {ArrowLeft} from "lucide-react";
 
-export default function RegistrationOTP() {
+export default function Registration() {
     const router = useRouter();
     const [form, setForm] = useState({regisNo: "", otp: ""});
 
@@ -16,24 +16,43 @@ export default function RegistrationOTP() {
         setForm({...form, [e.target.name]: e.target.value});
     };
 
-    const validateCredentials = (regisNo: string, otp: string): boolean => {
-        // Dummy function: always returns true for any input
-        return true;
-    };
+    const handleVerify = async () => {
+        if (!form.regisNo) {
+            alert("Registration Number is required");
+            return;
+        }
 
-    const handleVerify = () => {
-        if (validateCredentials(form.regisNo, form.otp)) {
-            if (form.regisNo.startsWith("TS")) {
-                router.push("/user/signup/teacher");
-            } else if (form.regisNo.startsWith("ST")) {
-                router.push("/user/signup/student");
+        try {
+            const res = await fetch("/api/auth/verify", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({regisNo: form.regisNo}),
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                localStorage.setItem("rollNo", form.regisNo);
+                localStorage.setItem("role", data.role);
+
+                if (data.role === "teacher") {
+                    router.push("/user/signup/teacher");
+                } else if (data.role === "student") {
+                    router.push("/user/signup/student");
+                } else {
+                    alert("Unknown role");
+                }
             } else {
-                alert("Invalid Registration Number format");
+                alert(data.message || "Verification failed");
             }
-        } else {
-            alert("Invalid Registration Number or OTP");
+        } catch (err) {
+            console.error("Error verifying:", err);
+            alert("Something went wrong");
         }
     };
+
 
     return (
         <div className="flex min-h-screen items-center justify-center px-4 bg-white">
@@ -47,7 +66,7 @@ export default function RegistrationOTP() {
             <Card className="w-full max-w-md p-6 shadow-lg rounded-lg bg-white border border-gray-300">
                 <CardHeader>
                     <CardTitle className="text-center text-2xl font-semibold text-black">
-                        Verify OTP
+                        Verify Registration
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -62,21 +81,6 @@ export default function RegistrationOTP() {
                                 type="text"
                                 placeholder="Enter your Registration Number"
                                 value={form.regisNo}
-                                onChange={handleChange}
-                                required
-                                className="border-gray-400 focus:border-black focus:ring-black"
-                            />
-                        </div>
-                        <div>
-                            <Label htmlFor="otp" className="text-black">
-                                OTP
-                            </Label>
-                            <Input
-                                id="otp"
-                                name="otp"
-                                type="text"
-                                placeholder="Enter OTP"
-                                value={form.otp}
                                 onChange={handleChange}
                                 required
                                 className="border-gray-400 focus:border-black focus:ring-black"
