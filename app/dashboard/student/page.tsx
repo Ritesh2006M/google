@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import Sidebar from "./components/sidebar";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import {Card, CardHeader, CardTitle, CardContent} from "@/components/ui/card";
+import {Badge} from "@/components/ui/badge";
 import StudentPerformanceChart from "./components/StudentPerformanceChart";
+import StudentTasksChart from "./components/StudentTasksChart";
 
 export default function StudentDashboard() {
     const [student, setStudent] = useState<any>(null);
@@ -27,7 +28,7 @@ export default function StudentDashboard() {
         <div className="flex h-screen bg-white text-black overflow-hidden">
             {/* Sidebar */}
             <div className="bg-white w-64 shadow-md">
-                <Sidebar />
+                <Sidebar/>
             </div>
 
             {/* Main Content */}
@@ -82,9 +83,14 @@ export default function StudentDashboard() {
                 )}
 
                 {/* Performance Chart */}
-                {student?.rollNo && (
-                    <div className="w-full md:w-1/2">
-                        <StudentPerformanceChart rollNo={student.rollNo} />
+                {student?.rollNo && student?.student_email && (
+                    <div className="flex flex-col md:flex-row gap-6">
+                        <div className="basis-full md:basis-2/5 h-full">
+                            <StudentPerformanceChart rollNo={student.rollNo}/>
+                        </div>
+                        <div className="basis-full md:basis-3/5 h-full">
+                            <StudentTasksChart email={student.student_email}/>
+                        </div>
                     </div>
                 )}
             </main>

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {useEffect, useState} from "react";
+import {PieChart, Pie, Cell, ResponsiveContainer} from "recharts";
+import {Card, CardHeader, CardTitle, CardContent} from "@/components/ui/card";
 
 const COLORS = ["#000000", "#d1d5db"]; // Black for scored, gray for remaining
 
@@ -10,7 +10,7 @@ interface Props {
     rollNo: string;
 }
 
-export default function StudentPerformanceChart({ rollNo }: Props) {
+export default function StudentPerformanceChart({rollNo}: Props) {
     const [data, setData] = useState<{
         totalScored: number;
         totalPossible: number;
@@ -36,8 +36,8 @@ export default function StudentPerformanceChart({ rollNo }: Props) {
     if (!data) return null;
 
     const chartData = [
-        { name: "Scored", value: data.totalScored },
-        { name: "Remaining", value: data.totalPossible - data.totalScored },
+        {name: "Scored", value: data.totalScored},
+        {name: "Remaining", value: data.totalPossible - data.totalScored},
     ];
 
     return (
@@ -57,7 +57,7 @@ export default function StudentPerformanceChart({ rollNo }: Props) {
                             stroke="none"
                         >
                             {chartData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>
                             ))}
                         </Pie>
                     </PieChart>
