@@ -47,7 +47,7 @@ export default function TeacherSidebar() {
   }
 
   return (
-    <aside className="fixed top-0 left-0 z-50 w-72 h-screen flex flex-col justify-between bg-white/80 dark:bg-[#1A1A1A]/80 backdrop-blur-md border-r border-gray-300/50 dark:border-gray-800/50 shadow-lg p-6">
+     <aside className="fixed top-0 left-0 z-50 w-72 h-screen flex flex-col justify-between bg-white/80 dark:bg-[#1A1A1A]/80 backdrop-blur-md border-r border-gray-300/50 dark:border-gray-800/50 shadow-lg p-6">
       {/* Top Section */}
       <div>
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-8 text-center">

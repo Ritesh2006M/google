@@ -1,99 +1,132 @@
 "use client";
 
-import {useEffect, useState} from "react";
-import {useRouter} from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "./components/sidebar";
-import {Card, CardHeader, CardTitle, CardContent} from "@/components/ui/card";
-import {Badge} from "@/components/ui/badge";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import StudentPerformanceChart from "./components/StudentPerformanceChart";
 import StudentTasksChart from "./components/StudentTasksChart";
 
 export default function StudentDashboard() {
-    const [student, setStudent] = useState<any>(null);
-    const [subjects, setSubjects] = useState<any[]>([]);
-    const router = useRouter();
+  const [student, setStudent] = useState<any>(null);
+  const [subjects, setSubjects] = useState<any[]>([]);
+  const router = useRouter();
 
-    useEffect(() => {
-        const studentData = localStorage.getItem("studentDetails");
-        const userData = localStorage.getItem("user");
+  useEffect(() => {
+    const studentData = localStorage.getItem("studentDetails");
+    const userData = localStorage.getItem("user");
 
-        if (!studentData || !userData) {
-            router.push("/user/login");
-            return;
-        }
+    if (!studentData || !userData) {
+      router.push("/user/login");
+      return;
+    }
 
-        setStudent(JSON.parse(studentData));
-        const parsedUser = JSON.parse(userData);
-        if (parsedUser.studentSubjects) {
-            setSubjects(parsedUser.studentSubjects);
-        }
-    }, []);
+    setStudent(JSON.parse(studentData));
+    const parsedUser = JSON.parse(userData);
+    if (parsedUser.studentSubjects) {
+      setSubjects(parsedUser.studentSubjects);
+    }
+  }, [router]);
 
-    return (
-        <div className="flex h-screen bg-white text-black overflow-hidden">
-            <div className="bg-white w-64 shadow-md">
-                <Sidebar/>
-            </div>
+  return (
+    <div className="flex min-h-screen bg-[#FFFFFF] dark:bg-[#000000] transition-colors duration-300 ease-in-out relative overflow-hidden">
+      {/* Subtle Background Texture */}
+      <div className="absolute inset-0 -z-10 opacity-5 pointer-events-none">
+        <div
+          className="w-full h-full bg-repeat"
+          style={{
+            backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="none" stroke="%23808080" stroke-width="1" d="M50 150 Q100 50 150 150" opacity="0.5"/></svg>')`,
+          }}
+        />
+      </div>
 
-            <main className="flex-1 p-6 bg-gray-100 overflow-y-auto">
-                <Card className="mb-6 shadow-md">
-                    <CardHeader>
-                        <CardTitle className="text-2xl font-bold">
-                            Welcome, {student?.fullName || "Student"}
-                        </CardTitle>
-                    </CardHeader>
-                </Card>
+      {/* Sidebar */}
+      <div className="w-72 bg-white/80 dark:bg-[#1A1A1A]/80 backdrop-blur-md border-r border-gray-300/50 dark:border-gray-800/50 shadow-lg">
+        <Sidebar />
+      </div>
 
-                {(student || subjects.length > 0) && (
-                    <Card className="shadow-md mb-6">
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-xl font-semibold text-gray-800">
-                                Profile Overview
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="text-gray-700 font-medium flex flex-wrap gap-x-10">
-                                {student && (
-                                    <>
-                                        <span>
-                                            Roll Number - <span className="font-semibold">{student.rollNo}</span>
-                                        </span>
-                                        <span>
-                                            Email - <span className="font-semibold">{student.student_email}</span>
-                                        </span>
-                                    </>
-                                )}
-                            </div>
+      {/* Main Content */}
+      <main className="flex-1 p-10 overflow-y-auto">
+        <div className="max-w-5xl mx-auto space-y-8">
+          {/* Welcome Card */}
+          <Card className="p-6 bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-sm border border-gray-300/50 dark:border-gray-700/50 rounded-3xl shadow-md">
+            <CardHeader className="p-0">
+              <CardTitle className="text-3xl font-bold text-[#000000] dark:text-[#FFFFFF] tracking-tight text-center">
+                Welcome, {student?.fullName || "Student"}
+              </CardTitle>
+            </CardHeader>
+          </Card>
 
-                            {subjects.length > 0 && (
-                                <div className="flex items-center gap-2 flex-wrap">
-                                    <span className="text-gray-700 font-medium">Subjects -</span>
-                                    {subjects.map((subj, index) => (
-                                        <Badge
-                                            key={index}
-                                            variant="secondary"
-                                            className="bg-blue-100 text-blue-800"
-                                        >
-                                            {subj.subject_name}
-                                        </Badge>
-                                    ))}
-                                </div>
-                            )}
-                        </CardContent>
-                    </Card>
-                )}
-
-                {student?.rollNo && student?.student_email && (
-                    <div className="flex flex-col md:flex-row gap-6">
-                        <div className="basis-full md:basis-2/5 h-full">
-                            <StudentPerformanceChart rollNo={student.rollNo}/>
-                        </div>
-                        <div className="basis-full md:basis-3/5 h-full">
-                            <StudentTasksChart email={student.student_email}/>
-                        </div>
+          {/* Profile Overview */}
+          {(student || subjects.length > 0) && (
+            <Card className="bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-sm border border-gray-300/50 dark:border-gray-700/50 rounded-3xl shadow-md hover:shadow-lg transition-all duration-300">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-xl font-semibold text-[#000000] dark:text-[#FFFFFF] text-center">
+                  Profile Overview
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {student && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-600 dark:text-gray-300">
+                    <div>
+                      <span className="font-medium">Roll Number:</span>{" "}
+                      <span className="font-semibold text-[#000000] dark:text-[#FFFFFF]">{student.rollNo}</span>
                     </div>
+                    <div>
+                      <span className="font-medium">Email:</span>{" "}
+                      <span className="font-semibold text-[#000000] dark:text-[#FFFFFF]">{student.student_email}</span>
+                    </div>
+                  </div>
                 )}
-            </main>
+                {subjects.length > 0 && (
+                  <div className="space-y-2">
+                    <span className="font-medium text-gray-600 dark:text-gray-300 block text-center">
+                      Subjects:
+                    </span>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {subjects.map((subj, index) => (
+                        <Badge
+                          key={index}
+                          variant="secondary"
+                          className="bg-gray-200 text-[#000000] dark:bg-gray-700 dark:text-[#FFFFFF] px-3 py-1 rounded-full"
+                        >
+                          {subj.subject_name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Performance and Tasks Charts */}
+          {student?.rollNo && student?.student_email && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Performance Overview */}
+              <Card className="bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-sm border border-gray-300/50 dark:border-gray-700/50 rounded-3xl shadow-md hover:shadow-lg transition-all duration-300">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xl font-semibold text-[#000000] dark:text-[#FFFFFF] text-center">
+                    Performance Overview
+                  </CardTitle>
+                </CardHeader>
+                <StudentPerformanceChart rollNo={student.rollNo} />
+              </Card>
+
+              {/* Tasks Overview */}
+              <Card className="bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-sm border border-gray-300/50 dark:border-gray-700/50 rounded-3xl shadow-md hover:shadow-lg transition-all duration-300">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xl font-semibold text-[#000000] dark:text-[#FFFFFF] text-center">
+                    Tasks Overview
+                  </CardTitle>
+                </CardHeader>
+                <StudentTasksChart email={student.student_email} />
+              </Card>
+            </div>
+          )}
         </div>
-    );
+      </main>
+    </div>
+  );
 }
