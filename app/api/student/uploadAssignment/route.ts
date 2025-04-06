@@ -9,7 +9,7 @@ async function sendAssignmentId(assignmentId: number) {
         console.log(`Sending assignmentId: ${assignmentId} to external API...`);
 
         const projectId = process.env.GCP_PROJECT_ID;
-        const response = await fetch(`https://us-central1-${projectId}.cloudfunctions.net/evaluateAnswer`, {
+        const response = await fetch(`https://us-central1-mineral-subject-450718-j1.cloudfunctions.net/evaluateAnswer`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
