@@ -1,26 +1,27 @@
 "use client";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import TeacherSidebar from "./sidebar";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import {Card} from "@/components/ui/card";
+import {Button} from "@/components/ui/button";
+import {useRouter} from "next/navigation";
 
 export default function TeacherDashboard() {
     const router = useRouter();
     const [teacher, setTeacher] = useState<{ fullName: string; subject: string; rollNo?: string } | null>(null);
 
     useEffect(() => {
-        // Fetch teacher details from localStorage
         const storedTeacher = localStorage.getItem("teacherDetails");
-        if (storedTeacher) {
-            setTeacher(JSON.parse(storedTeacher));
+        if (!storedTeacher) {
+            router.push("/user/login");
+            return;
         }
+        setTeacher(JSON.parse(storedTeacher));
     }, []);
 
     return (
         <div className="flex min-h-screen">
             <div className="bg-white w-64 shadow-md">
-                <TeacherSidebar />
+                <TeacherSidebar/>
             </div>
             <main className="flex-1 p-6 bg-gray-100">
                 {/* Teacher Info */}
@@ -48,13 +49,13 @@ export default function TeacherDashboard() {
 
                     {/* Evaluate Submissions */}
                     <Card className="p-6 flex flex-col items-start">
-                        <h2 className="text-xl font-semibold">Evaluate Submissions</h2>
-                        <p className="text-gray-500">Review and grade student submissions.</p>
+                        <h2 className="text-xl font-semibold">View Assignments</h2>
+                        <p className="text-gray-500">View the uploaded assignments.</p>
                         <Button
-                            onClick={() => router.push("/dashboard/teacher/evaluate")}
+                            onClick={() => router.push("/dashboard/teacher/assign")}
                             className="mt-4 bg-black text-white px-6 py-3 w-full"
                         >
-                            Go to Evaluation
+                            Go to Assignments
                         </Button>
                     </Card>
                 </div>

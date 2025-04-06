@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
         const [tasks]: any = await db.query(
             `SELECT id
              FROM task
-             WHERE subject_id IN (?)`,
+             WHERE subject_id IN (?) AND status = 1`,
             [subjectIds]
         );
 

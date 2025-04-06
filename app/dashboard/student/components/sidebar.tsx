@@ -4,6 +4,7 @@ import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {usePathname} from "next/navigation";
 import {FilePlus, ClipboardCheck, Home, LogOut, FileText} from "lucide-react";
+import {useEffect} from "react";
 
 const links = [
     {href: "/dashboard/student", label: "Dashboard", icon: Home},
@@ -14,6 +15,15 @@ const links = [
 export default function StudentSidebar() {
     const pathname = usePathname();
     const router = useRouter();
+    useEffect(() => {
+        const studentData = localStorage.getItem("studentDetails");
+        const userData = localStorage.getItem("user");
+
+        if (!studentData || !userData) {
+            router.push("/user/login");
+            return;
+        }
+    }, []);
 
     const handleLogout = async () => {
         try {

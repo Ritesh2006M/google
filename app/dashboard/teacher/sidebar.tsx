@@ -4,17 +4,24 @@ import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {usePathname} from "next/navigation";
 import {FilePlus, ClipboardCheck, Home, LogOut, FileText} from "lucide-react";
+import {useEffect} from "react";
 
 const links = [
     {href: "/dashboard/teacher", label: "Dashboard", icon: Home},
     {href: "/dashboard/teacher/upload", label: "Upload", icon: FilePlus},
     {href: "/dashboard/teacher/assign", label: "Assignments", icon: FileText},
-    {href: "/dashboard/teacher/evaluate", label: "Evaluate", icon: ClipboardCheck},
 ];
 
 export default function TeacherSidebar() {
     const pathname = usePathname();
     const router = useRouter();
+    useEffect(() => {
+        const storedTeacher = localStorage.getItem("teacherDetails");
+        if (!storedTeacher) {
+            router.push("/user/login");
+            return;
+        }
+    }, []);
 
     const handleLogout = async () => {
         try {
