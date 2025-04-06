@@ -9,6 +9,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Trash} from "lucide-react";
 import {Switch} from "@/components/ui/switch";
 import {useRef} from "react";
+import {Loader2} from "lucide-react";
 
 
 export default function UploadAssignment() {
@@ -20,6 +21,7 @@ export default function UploadAssignment() {
     const [maxAutoMarks, setMaxAutoMarks] = useState(100);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [teacher, setTeacher] = useState<{ fullName: string; subject: string; rollNo?: string } | null>(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         // Fetch teacher details from localStorage
@@ -42,10 +44,10 @@ export default function UploadAssignment() {
             return;
         }
 
-        // Set total marks based on evaluation type
+        setLoading(true); // Start loading
+
         let finalTotalMarks = isAutoEvaluation ? maxAutoMarks : totalMarks;
 
-        // Prepare evaluation criteria
         let formattedCriteria;
         if (isAutoEvaluation) {
             formattedCriteria = [{name: "Auto evaluate based on question and answer", marks: maxAutoMarks}];
@@ -55,7 +57,6 @@ export default function UploadAssignment() {
             }));
         }
 
-        // Prepare FormData for file assignments & other data
         const formData = new FormData();
         formData.append("assignmentQuestion", assignmentQuestion);
         // @ts-ignore
@@ -63,7 +64,8 @@ export default function UploadAssignment() {
         // @ts-ignore
         formData.append("rollNo", teacher.rollNo);
         formData.append("criteria", JSON.stringify(formattedCriteria));
-        formData.append("totalMarks", finalTotalMarks.toString()); // Ensuring correct total marks
+        formData.append("totalMarks", finalTotalMarks.toString());
+
         if (selectedFile) {
             formData.append("file", selectedFile);
         }
@@ -77,7 +79,6 @@ export default function UploadAssignment() {
             const result = await response.json();
             if (result.success) {
                 alert("Assignment uploaded successfully!");
-                // Reset fields after successful assignments
                 setSelectedFile(null);
                 setAssignmentQuestion("");
                 setCriteria([{name: "", marks: 0}]);
@@ -90,9 +91,10 @@ export default function UploadAssignment() {
         } catch (error) {
             console.error("Upload error:", error);
             alert("An error occurred while uploading the assignment.");
+        } finally {
+            setLoading(false); // End loading
         }
     };
-
 
     const addCriteria = () => {
         setCriteria([...criteria, {name: "", marks: 0}]);
@@ -268,9 +270,21 @@ export default function UploadAssignment() {
                 </Card>
 
                 {/* Upload Button */}
-                <Button onClick={handleUpload} className="w-full bg-black text-white px-6 py-3">
-                    Upload Assignment
+                <Button
+                    onClick={handleUpload}
+                    className="w-full bg-black text-white px-6 py-3 flex items-center justify-center"
+                    disabled={loading}
+                >
+                    {loading ? (
+                        <>
+                            <Loader2 className="animate-spin mr-2 h-5 w-5"/>
+                            Uploading...
+                        </>
+                    ) : (
+                        "Upload Assignment"
+                    )}
                 </Button>
+
             </main>
         </div>
     );

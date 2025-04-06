@@ -34,6 +34,7 @@ export default function StudentAssignments() {
     const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
 
     // Load user details from localStorage ONCE and then use it in both effects
     useEffect(() => {
@@ -92,6 +93,8 @@ export default function StudentAssignments() {
             return;
         }
 
+        setIsUploading(true); // start loading
+
         try {
             const formData = new FormData();
             formData.append("taskId", selectedAssignment.id.toString());
@@ -113,8 +116,11 @@ export default function StudentAssignments() {
         } catch (error) {
             console.error("Upload failed:", error);
             alert("An error occurred while uploading.");
+        } finally {
+            setIsUploading(false); // stop loading
         }
     };
+
 
     return (
         <div className="flex h-screen bg-white text-black overflow-hidden">
@@ -220,9 +226,32 @@ export default function StudentAssignments() {
                                     className="bg-gray-500 text-white hover:bg-gray-600 px-6 py-2 rounded-lg">
                                 Cancel
                             </Button>
-                            <Button onClick={handleUpload}
-                                    className="bg-black text-white hover:bg-gray-800 px-6 py-2 rounded-lg">
-                                Submit
+                            <Button
+                                onClick={handleUpload}
+                                className="bg-black text-white hover:bg-gray-800 px-6 py-2 rounded-lg flex items-center gap-2"
+                                disabled={isUploading}
+                            >
+                                {isUploading ? (
+                                    <>
+                                        <svg
+                                            className="animate-spin h-5 w-5 text-white"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                    strokeWidth="4"/>
+                                            <path
+                                                className="opacity-75"
+                                                fill="currentColor"
+                                                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                            />
+                                        </svg>
+                                        Uploading...
+                                    </>
+                                ) : (
+                                    "Submit"
+                                )}
                             </Button>
                         </DialogFooter>
                     </DialogContent>

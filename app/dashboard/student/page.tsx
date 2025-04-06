@@ -1,6 +1,7 @@
 "use client";
 
 import {useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
 import Sidebar from "./components/sidebar";
 import {Card, CardHeader, CardTitle, CardContent} from "@/components/ui/card";
 import {Badge} from "@/components/ui/badge";
@@ -10,30 +11,31 @@ import StudentTasksChart from "./components/StudentTasksChart";
 export default function StudentDashboard() {
     const [student, setStudent] = useState<any>(null);
     const [subjects, setSubjects] = useState<any[]>([]);
+    const router = useRouter();
 
     useEffect(() => {
         const studentData = localStorage.getItem("studentDetails");
         const userData = localStorage.getItem("user");
 
-        if (studentData) setStudent(JSON.parse(studentData));
-        if (userData) {
-            const parsedUser = JSON.parse(userData);
-            if (parsedUser.studentSubjects) {
-                setSubjects(parsedUser.studentSubjects);
-            }
+        if (!studentData || !userData) {
+            router.push("/user/login");
+            return;
+        }
+
+        setStudent(JSON.parse(studentData));
+        const parsedUser = JSON.parse(userData);
+        if (parsedUser.studentSubjects) {
+            setSubjects(parsedUser.studentSubjects);
         }
     }, []);
 
     return (
         <div className="flex h-screen bg-white text-black overflow-hidden">
-            {/* Sidebar */}
             <div className="bg-white w-64 shadow-md">
                 <Sidebar/>
             </div>
 
-            {/* Main Content */}
             <main className="flex-1 p-6 bg-gray-100 overflow-y-auto">
-                {/* Welcome Card */}
                 <Card className="mb-6 shadow-md">
                     <CardHeader>
                         <CardTitle className="text-2xl font-bold">
@@ -42,7 +44,6 @@ export default function StudentDashboard() {
                     </CardHeader>
                 </Card>
 
-                {/* Profile Overview */}
                 {(student || subjects.length > 0) && (
                     <Card className="shadow-md mb-6">
                         <CardHeader className="pb-2">
@@ -82,7 +83,6 @@ export default function StudentDashboard() {
                     </Card>
                 )}
 
-                {/* Performance Chart */}
                 {student?.rollNo && student?.student_email && (
                     <div className="flex flex-col md:flex-row gap-6">
                         <div className="basis-full md:basis-2/5 h-full">
