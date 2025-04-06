@@ -1,291 +1,325 @@
 "use client";
 
 import TeacherSidebar from "../sidebar";
-import {useEffect, useState} from "react";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Card} from "@/components/ui/card";
-import {Textarea} from "@/components/ui/textarea";
-import {Trash} from "lucide-react";
-import {Switch} from "@/components/ui/switch";
-import {useRef} from "react";
-import {Loader2} from "lucide-react";
-
+import { useEffect, useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Trash, Loader2, Upload } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 export default function UploadAssignment() {
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [assignmentQuestion, setAssignmentQuestion] = useState("");
-    const [criteria, setCriteria] = useState<{ name: string; marks: number }[]>([{name: "", marks: 0}]);
-    const [totalMarks, setTotalMarks] = useState(0);
-    const [isAutoEvaluation, setIsAutoEvaluation] = useState(false);
-    const [maxAutoMarks, setMaxAutoMarks] = useState(100);
-    const fileInputRef = useRef<HTMLInputElement | null>(null);
-    const [teacher, setTeacher] = useState<{ fullName: string; subject: string; rollNo?: string } | null>(null);
-    const [loading, setLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [assignmentQuestion, setAssignmentQuestion] = useState("");
+  const [criteria, setCriteria] = useState<{ name: string; marks: number }[]>([{ name: "", marks: 0 }]);
+  const [totalMarks, setTotalMarks] = useState(0);
+  const [isAutoEvaluation, setIsAutoEvaluation] = useState(false);
+  const [maxAutoMarks, setMaxAutoMarks] = useState(100);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [teacher, setTeacher] = useState<{ fullName: string; subject: string; rollNo?: string } | null>(null);
+  const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        // Fetch teacher details from localStorage
-        const storedTeacher = localStorage.getItem("teacherDetails");
-        if (storedTeacher) {
-            setTeacher(JSON.parse(storedTeacher));
-        }
-    }, []);
+  useEffect(() => {
+    const storedTeacher = localStorage.getItem("teacherDetails");
+    if (storedTeacher) {
+      setTeacher(JSON.parse(storedTeacher));
+    }
+  }, []);
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
-            setSelectedFile(event.target.files[0]);
-        }
-    };
+  // File Handling
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
 
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+    if (event.dataTransfer.files && event.dataTransfer.files[0]) {
+      const file = event.dataTransfer.files[0];
+      if (file.type === "application/pdf") {
+        setSelectedFile(file);
+      } else {
+        alert("Please drop a PDF file only.");
+      }
+    }
+  };
 
-    const handleUpload = async () => {
-        if (!assignmentQuestion.trim()) {
-            alert("Please enter an assignment question.");
-            return;
-        }
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(true);
+  };
 
-        setLoading(true); // Start loading
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
 
-        let finalTotalMarks = isAutoEvaluation ? maxAutoMarks : totalMarks;
+  const handleUpload = async () => {
+    if (!assignmentQuestion.trim()) {
+      alert("Please enter an assignment question.");
+      return;
+    }
 
-        let formattedCriteria;
-        if (isAutoEvaluation) {
-            formattedCriteria = [{name: "Auto evaluate based on question and answer", marks: maxAutoMarks}];
-        } else {
-            formattedCriteria = criteria.map((crit) => ({
-                name: `${crit.name} for ${crit.marks} marks, `
-            }));
-        }
+    setLoading(true);
+    let finalTotalMarks = isAutoEvaluation ? maxAutoMarks : totalMarks;
+    let formattedCriteria = isAutoEvaluation
+      ? [{ name: "Auto evaluate based on question and answer", marks: maxAutoMarks }]
+      : criteria.map((crit) => ({ name: `${crit.name} for ${crit.marks} marks` }));
 
-        const formData = new FormData();
-        formData.append("assignmentQuestion", assignmentQuestion);
-        // @ts-ignore
-        formData.append("subject", teacher.subject);
-        // @ts-ignore
-        formData.append("rollNo", teacher.rollNo);
-        formData.append("criteria", JSON.stringify(formattedCriteria));
-        formData.append("totalMarks", finalTotalMarks.toString());
+    const formData = new FormData();
+    formData.append("assignmentQuestion", assignmentQuestion);
+    formData.append("subject", teacher?.subject || "");
+    formData.append("rollNo", teacher?.rollNo || "");
+    formData.append("criteria", JSON.stringify(formattedCriteria));
+    formData.append("totalMarks", finalTotalMarks.toString());
 
-        if (selectedFile) {
-            formData.append("file", selectedFile);
-        }
+    if (selectedFile) {
+      formData.append("file", selectedFile);
+    }
 
-        try {
-            const response = await fetch("/api/teacher/upload-assignment", {
-                method: "POST",
-                body: formData
-            });
+    try {
+      const response = await fetch("/api/teacher/upload-assignment", {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      if (result.success) {
+        alert("Assignment uploaded successfully!");
+        setSelectedFile(null);
+        setAssignmentQuestion("");
+        setCriteria([{ name: "", marks: 0 }]);
+        setTotalMarks(0);
+        setIsAutoEvaluation(false);
+        setMaxAutoMarks(100);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      } else {
+        alert(`Error: ${result.error}`);
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("An error occurred while uploading the assignment.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            const result = await response.json();
-            if (result.success) {
-                alert("Assignment uploaded successfully!");
-                setSelectedFile(null);
-                setAssignmentQuestion("");
-                setCriteria([{name: "", marks: 0}]);
-                setTotalMarks(0);
-                setIsAutoEvaluation(false);
-                setMaxAutoMarks(100);
-            } else {
-                alert(`Error: ${result.error}`);
-            }
-        } catch (error) {
-            console.error("Upload error:", error);
-            alert("An error occurred while uploading the assignment.");
-        } finally {
-            setLoading(false); // End loading
-        }
-    };
+  const addCriteria = () => {
+    setCriteria([...criteria, { name: "", marks: 0 }]);
+  };
 
-    const addCriteria = () => {
-        setCriteria([...criteria, {name: "", marks: 0}]);
-    };
+  const updateCriteria = (index: number, field: "name" | "marks", value: string | number) => {
+    const newCriteria = [...criteria];
+    if (field === "name") {
+      newCriteria[index].name = value as string;
+    } else {
+      let numValue = Number(value);
+      if (!isNaN(numValue) && numValue >= 0) {
+        newCriteria[index].marks = numValue;
+      }
+    }
+    setCriteria(newCriteria);
+    setTotalMarks(newCriteria.reduce((sum, item) => sum + item.marks, 0));
+  };
 
-    const updateCriteria = (index: number, field: "name" | "marks", value: string | number) => {
-        const newCriteria = [...criteria];
-        if (field === "name") {
-            newCriteria[index].name = value as string;
-        } else {
-            let numValue = Number(value);
-            if (!isNaN(numValue) && numValue >= 0) {
-                newCriteria[index].marks = numValue;
-            }
-        }
-        setCriteria(newCriteria);
-        setTotalMarks(newCriteria.reduce((sum, item) => sum + item.marks, 0));
-    };
+  const removeCriteria = (index: number) => {
+    if (criteria.length === 1) return;
+    const newCriteria = criteria.filter((_, i) => i !== index);
+    setCriteria(newCriteria);
+    setTotalMarks(newCriteria.reduce((sum, item) => sum + item.marks, 0));
+  };
 
-    const removeCriteria = (index: number) => {
-        if (criteria.length === 1) return;
-        const newCriteria = criteria.filter((_, i) => i !== index);
-        setCriteria(newCriteria);
-        setTotalMarks(newCriteria.reduce((sum, item) => sum + item.marks, 0));
-    };
+  return (
+    <div className="flex min-h-screen bg-[#FFFFFF] dark:bg-[#000000] transition-colors duration-300 ease-in-out relative overflow-hidden">
+      {/* Subtle Background Texture */}
+      <div className="absolute inset-0 -z-10 opacity-5 pointer-events-none">
+        <div
+          className="w-full h-full bg-repeat"
+          style={{
+            backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="none" stroke="%23808080" stroke-width="1" d="M50 150 Q100 50 150 150" opacity="0.5"/></svg>')`,
+          }}
+        />
+      </div>
 
-    return (
-        <div className="flex h-screen bg-white text-black overflow-hidden">
-            <div className="bg-white w-64 shadow-md">
-                <TeacherSidebar/>
+      {/* Sidebar */}
+      <div className="w-72 bg-white/80 dark:bg-[#1A1A1A]/80 backdrop-blur-md border-r border-gray-300/50 dark:border-gray-800/50 shadow-lg">
+        <TeacherSidebar />
+      </div>
+
+      {/* Main Content */}
+      <main className="flex-1 p-10 overflow-y-auto">
+        <div className="max-w-3xl mx-auto space-y-8">
+          {/* Header */}
+          <Card className="p-6 bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-sm border border-gray-300/50 dark:border-gray-700/50 rounded-3xl shadow-md">
+            <h1 className="text-3xl font-bold text-[#000000] dark:text-[#FFFFFF] tracking-tight text-center">
+              Upload Assignment
+            </h1>
+          </Card>
+
+          {/* Assignment Question */}
+          <Card className="p-6 bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-sm border border-gray-300/50 dark:border-gray-700/50 rounded-3xl shadow-md hover:shadow-lg transition-all duration-300">
+            <div className="space-y-4">
+              <label className="text-lg font-semibold text-[#000000] dark:text-[#FFFFFF] block">
+                Assignment Question
+              </label>
+              <Textarea
+                value={assignmentQuestion}
+                onChange={(e) => setAssignmentQuestion(e.target.value)}
+                placeholder="Type your assignment question here..."
+                className="w-full resize-none min-h-[100px] bg-transparent border-gray-300 dark:border-gray-600 text-[#000000] dark:text-[#FFFFFF] rounded-xl"
+                onInput={(e) => {
+                  e.currentTarget.style.height = "auto";
+                  e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
+                }}
+              />
             </div>
-            <main className="flex-1 p-8 bg-gray-100 overflow-y-auto">
+          </Card>
 
-                <Card className="mb-6 p-4">
-                    <h1 className="text-3xl font-bold">Upload Assignment</h1>
-                </Card>
-
-
-                {/* Assignment Question Input */}
-                <Card className="mb-6 p-4">
-                    <label className="text-lg font-semibold mb-2">Assignment Question</label>
-                    <Textarea
-                        value={assignmentQuestion}
-                        onChange={(e) => setAssignmentQuestion(e.target.value)}
-                        placeholder="Enter the assignment question"
-                        className="mt-2 resize-none min-h-[50px]"
-                        rows={1}
-                        onInput={(e) => {
-                            e.currentTarget.style.height = "auto";
-                            e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
-                        }}
-                    />
-                </Card>
-
-                {/* File Upload */}
-                <Card className="mb-6 p-4">
-                    {/* Label */}
-                    <label className="text-lg font-semibold mb-2">
-                        Upload Assignment File (PDF)
-                        <span className="text-gray-400 text-sm"> (Optional)</span>
+          {/* File Upload with Drag-and-Drop */}
+          <Card
+            className={`p-6 bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-sm border border-gray-300/50 dark:border-gray-700/50 rounded-3xl shadow-md hover:shadow-lg transition-all duration-300 ${
+              isDragging ? "border-dashed border-2 border-gray-500" : ""
+            }`}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+          >
+            <div className="space-y-4">
+              <label className="text-lg font-semibold text-[#000000] dark:text-[#FFFFFF] block">
+                Upload Assignment File (PDF) <span className="text-gray-500 dark:text-gray-400 text-sm">(Optional)</span>
+              </label>
+              {!selectedFile ? (
+                <div className="flex flex-col items-center justify-center space-y-4">
+                  <Upload className="w-10 h-10 text-gray-500 dark:text-gray-400" />
+                  <p className="text-gray-600 dark:text-gray-300 text-center">
+                    Drag and drop a PDF here or{" "}
+                    <label
+                      htmlFor="file-upload"
+                      className="underline cursor-pointer hover:text-gray-800 dark:hover:text-gray-200"
+                    >
+                      browse
                     </label>
+                  </p>
+                  <Input
+                    id="file-upload"
+                    type="file"
+                    accept="application/pdf"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </div>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 truncate flex-1">
+                    <strong>Selected:</strong> {selectedFile.name}
+                  </p>
+                  <Button
+                    onClick={() => {
+                      setSelectedFile(null);
+                      if (fileInputRef.current) fileInputRef.current.value = "";
+                    }}
+                    className="bg-[#000000] text-white hover:bg-gray-800 dark:bg-[#FFFFFF] dark:text-black dark:hover:bg-gray-200 px-4 py-2 rounded-full"
+                  >
+                    Delete
+                  </Button>
+                </div>
+              )}
+            </div>
+          </Card>
 
-                    {/* File Input & Delete Button */}
-                    <div className="flex items-center gap-4 mt-2">
-                        <Input
-                            type="file"
-                            accept="application/pdf"
-                            ref={fileInputRef}
-                            onChange={handleFileChange}
-                            className="w-2/3"
-                        />
-                        {selectedFile && (
-                            <Button
-                                onClick={() => {
-                                    setSelectedFile(null);
-                                    if (fileInputRef.current) {
-                                        fileInputRef.current.value = ""; // Clear file input field
-                                    }
-                                }}
-                                className="bg-red-500 text-white px-4 py-2"
-                            >
-                                Delete
-                            </Button>
-                        )}
+          {/* Auto Evaluation & Criteria */}
+          <Card className="p-6 bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-sm border border-gray-300/50 dark:border-gray-700/50 rounded-3xl shadow-md hover:shadow-lg transition-all duration-300">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-semibold text-[#000000] dark:text-[#FFFFFF]">
+                  Auto Evaluation
+                </span>
+                <Switch checked={isAutoEvaluation} onCheckedChange={setIsAutoEvaluation} />
+              </div>
+              <hr className="border-gray-300 dark:border-gray-600" />
+              {isAutoEvaluation ? (
+                <div className="space-y-4">
+                  <label className="text-md font-medium text-[#000000] dark:text-[#FFFFFF] block">
+                    Max Auto Evaluation Marks
+                  </label>
+                  <Input
+                    type="number"
+                    placeholder="Max Marks"
+                    value={maxAutoMarks || ""}
+                    onChange={(e) => {
+                      let numValue = e.target.value;
+                      if (numValue === "") setMaxAutoMarks(0);
+                      let num = Number(numValue);
+                      if (!isNaN(num) && num >= 0) setMaxAutoMarks(num);
+                    }}
+                    className="w-1/3 bg-transparent border-gray-300 dark:border-gray-600 text-[#000000] dark:text-[#FFFFFF] rounded-xl"
+                  />
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <h2 className="text-lg font-semibold text-[#000000] dark:text-[#FFFFFF]">Evaluation Criteria</h2>
+                  {criteria.map((criterion, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <Textarea
+                        placeholder="Enter criterion (e.g., Clarity)"
+                        value={criterion.name}
+                        onChange={(e) => updateCriteria(index, "name", e.target.value)}
+                        className="flex-1 resize-none min-h-[40px] bg-transparent border-gray-300 dark:border-gray-600 text-[#000000] dark:text-[#FFFFFF] rounded-xl"
+                        onInput={(e) => {
+                          e.currentTarget.style.height = "auto";
+                          e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
+                        }}
+                      />
+                      <Input
+                        type="number"
+                        placeholder="Marks"
+                        value={criterion.marks || ""}
+                        onChange={(e) => updateCriteria(index, "marks", e.target.value)}
+                        className="w-24 bg-transparent border-gray-300 dark:border-gray-600 text-[#000000] dark:text-[#FFFFFF] rounded-xl"
+                      />
+                      <Button
+                        onClick={() => removeCriteria(index)}
+                        className="bg-[#000000] text-white hover:bg-gray-800 dark:bg-[#FFFFFF] dark:text-black dark:hover:bg-gray-200 p-2 rounded-full"
+                        disabled={criteria.length === 1}
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
                     </div>
+                  ))}
+                  <Button
+                    onClick={addCriteria}
+                    className="w-full bg-[#000000] text-white hover:bg-gray-800 dark:bg-[#FFFFFF] dark:text-black dark:hover:bg-gray-200 px-4 py-2 rounded-full"
+                  >
+                    + Add Criterion
+                  </Button>
+                  <div className="text-md font-medium text-[#000000] dark:text-[#FFFFFF] text-center">
+                    Total Marks: {totalMarks}
+                  </div>
+                </div>
+              )}
+            </div>
+          </Card>
 
-                    {/* Display Selected File */}
-                    {selectedFile && (
-                        <p className="mt-2 text-sm text-gray-600 truncate max-w-full">
-                            <strong>Selected:</strong> {selectedFile.name}
-                        </p>
-                    )}
-                </Card>
-
-
-                {/* Auto Evaluation Toggle */}
-                <Card className="mb-6 p-4">
-                    <div className="flex items-center gap-3">
-                        <Switch checked={isAutoEvaluation} onCheckedChange={setIsAutoEvaluation}/>
-                        <span className="text-md font-medium text-gray-600">Auto Evaluation</span>
-                    </div>
-
-                    {/* Separator for clear UI */}
-                    <hr className="my-4 border-gray-300"/>
-                    {isAutoEvaluation ? (
-                        <div className="mt-4">
-                            <label className="text-lg font-semibold mb-2">Max Auto Evaluation Marks</label>
-                            <Input
-                                type="number"
-                                placeholder="Max Marks"
-                                value={maxAutoMarks || ""}
-                                onChange={(e) => {
-                                    let numValue = e.target.value;
-
-                                    // Prevent leading zeros and ensure valid numbers
-                                    if (numValue === "") {
-                                        setMaxAutoMarks(0); // Handle empty input gracefully
-                                        return;
-                                    }
-
-                                    let num = Number(numValue);
-                                    if (!isNaN(num) && num >= 0) {
-                                        setMaxAutoMarks(num);
-                                    }
-                                }}
-                                className="mt-2 w-1/2"
-                            />
-
-                        </div>
-                    ) : (
-                        <div className="mt-4">
-                            <h2 className="text-lg font-semibold mb-3">Evaluation Criteria</h2>
-                            {criteria.map((criterion, index) => (
-                                <div key={index} className="flex items-start gap-2 mb-3">
-                                    <Textarea
-                                        placeholder="Criterion name"
-                                        value={criterion.name}
-                                        onChange={(e) => updateCriteria(index, "name", e.target.value)}
-                                        className="w-2/3 resize-none min-h-[40px]"
-                                        rows={1}
-                                        onInput={(e) => {
-                                            e.currentTarget.style.height = "auto";
-                                            e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
-                                        }}
-                                    />
-                                    <Input
-                                        type="number"
-                                        placeholder="Marks"
-                                        value={criterion.marks || ""}
-                                        onChange={(e) => updateCriteria(index, "marks", e.target.value)}
-                                        className="w-1/4"
-                                    />
-                                    <Button
-                                        onClick={() => removeCriteria(index)}
-                                        className="bg-red-500 text-white px-3 py-2"
-                                        disabled={criteria.length === 1}
-                                    >
-                                        <Trash className="h-4 w-4"/>
-                                    </Button>
-                                </div>
-                            ))}
-
-                            <Button onClick={addCriteria} className="mt-2 bg-black text-white px-4 py-2">
-                                + Add Criterion
-                            </Button>
-
-                            {/* Total Marks Display */}
-                            <div className="mt-4 text-lg font-semibold">
-                                Total Marks: {totalMarks}
-                            </div>
-                        </div>
-                    )}
-                </Card>
-
-                {/* Upload Button */}
-                <Button
-                    onClick={handleUpload}
-                    className="w-full bg-black text-white px-6 py-3 flex items-center justify-center"
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <>
-                            <Loader2 className="animate-spin mr-2 h-5 w-5"/>
-                            Uploading...
-                        </>
-                    ) : (
-                        "Upload Assignment"
-                    )}
-                </Button>
-
-            </main>
+          {/* Upload Button */}
+          <Button
+            onClick={handleUpload}
+            className="w-full bg-[#000000] text-white hover:bg-gray-800 dark:bg-[#FFFFFF] dark:text-black dark:hover:bg-gray-200 px-6 py-3 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300"
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin mr-2 h-5 w-5" />
+                Uploading...
+              </>
+            ) : (
+              "Upload Assignment"
+            )}
+          </Button>
         </div>
-    );
+      </main>
+    </div>
+  );
 }
