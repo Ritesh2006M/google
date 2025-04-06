@@ -9,7 +9,6 @@ const links = [
     {href: "/dashboard/teacher", label: "Dashboard", icon: Home},
     {href: "/dashboard/teacher/upload", label: "Upload", icon: FilePlus},
     {href: "/dashboard/teacher/assign", label: "Assignments", icon: FileText},
-    {href: "/dashboard/teacher/evaluate", label: "Evaluate", icon: ClipboardCheck},
 ];
 
 export default function TeacherSidebar() {
