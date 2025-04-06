@@ -1,7 +1,7 @@
-import Link from "next/link"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 export default function Home() {
   return (
@@ -98,50 +98,160 @@ export default function Home() {
         </section>
 
         {/* Problem & Objective Section */}
-        <section className="flex flex-col justify-start pt-[10vh] pb-[5vh] bg-[#ECE5DB]">
-          <div className="container mx-auto px-4 md:px-6">
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">Our Challenge & Solution</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              {/* Problem Statement */}
-              <div className="flex flex-col space-y-4">
-                <h3 className="text-2xl font-semibold text-gray-800">Problem Statement</h3>
-                <p className="text-base text-gray-700 leading-relaxed">
-                  Teachers in schools, coaching centres, and colleges often face a heavy workload when
-                  providing individualized feedback to students in large classrooms. Manual grading
-                  and feedback processes are time-consuming, leaving educators with limited time to
-                  focus on teaching and mentoring. This challenge is particularly acute in
-                  under-resourced settings, where teacher-to-student ratios are high. As a result,
-                  students miss out on personalized guidance, which is critical for their academic
-                  growth and success.
+        <section className="bg-[#ECE5DB]  py-24 relative overflow-hidden">
+          {/* Subtle Background Texture */}
+
+          <div className="container mx-auto px-4 md:px-8">
+            {/* Heading */}
+            <h2 className="text-4xl font-bold text-center text-[#2A2A2A] mb-16 tracking-tight">
+              Our Challenge & Solution
+            </h2>
+
+            {/* Problem & Objective Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-24 max-w-5xl mx-auto">
+              <div className="bg-white/70 backdrop-blur-md border border-gray-200 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300">
+                <h3 className="text-2xl font-semibold text-[#2A2A2A] mb-4">
+                  Problem Statement
+                </h3>
+                <p className="text-[#5A5A5A] leading-relaxed text-base">
+                  Teachers in schools, coaching centres, and colleges often face
+                  a heavy workload when providing individualized feedback to
+                  students in large classrooms. Manual grading and feedback
+                  processes are time-consuming, leaving educators with limited
+                  time to focus on teaching and mentoring. This challenge is
+                  especially severe in under-resourced areas where
+                  teacher-student ratios are high.
                 </p>
               </div>
-              {/* Objective */}
-              <div className="flex flex-col space-y-4">
-                <h3 className="text-2xl font-semibold text-gray-800">Our Objective</h3>
-                <p className="text-base text-gray-700 leading-relaxed">
-                  Participants are tasked with creating an AI-powered teacher assistant that automates
-                  the grading of assignments and provides personalized feedback to students. The
-                  solution should enhance the teaching process by reducing the burden on educators,
-                  improving the quality of feedback, and enabling personalized learning experiences.
-                  Our solution aligns with UN SDG 4: Quality Education, ensuring inclusive and
-                  equitable quality education and promoting lifelong learning opportunities for all.
+
+              <div className="bg-white/70 backdrop-blur-md border border-gray-200 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300">
+                <h3 className="text-2xl font-semibold text-[#2A2A2A] mb-4">
+                  Our Objective
+                </h3>
+                <p className="text-[#5A5A5A] leading-relaxed text-base">
+                  We aim to build an AI-powered teacher assistant that automates
+                  grading and provides personalized feedback. This tool helps
+                  educators save time, enhances the feedback quality, and
+                  enables scalable personalized learning — supporting UN SDG 4:
+                  Quality Education.
                 </p>
               </div>
             </div>
 
-            {/* Multi-Collage Layout */}
-            <div className="mt-16">
-              <h3 className="text-2xl font-semibold text-center mb-6 text-gray-800">How We Solve It</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="h-40 bg-black rounded-xl" />
-                <div className="h-40 bg-white border border-black rounded-xl" />
-                <div className="h-40 bg-black rounded-xl" />
-                <div className="h-40 bg-white border border-black rounded-xl" />
+            {/* How We Solve It Section */}
+            <div className="relative max-w-3xl mx-auto">
+              <h3 className="text-3xl font-semibold text-[#2A2A2A] mb-12 text-center">
+                How We Solve It
+              </h3>
+
+              {/* Step 1 */}
+              <div className="flex flex-col md:flex-row items-start mb-16 relative">
+                <div className="flex-shrink-0 w-10 h-10 bg-[#F26257] rounded-full flex items-center justify-center text-white font-bold text-lg mr-6">
+                  1
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-xl font-bold text-[#2A2A2A] mb-2">
+                    Image-based Assignment Input
+                  </h4>
+                  <p className="text-[#5A5A5A] leading-relaxed">
+                    Students upload their handwritten or typed assignments as
+                    image or PDF files. OCR and CV modules convert them into
+                    machine-readable formats for further processing.
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="flex flex-col md:flex-row-reverse items-start mb-16 relative">
+                <div className="flex-shrink-0 w-10 h-10 bg-[#F26257] rounded-full flex items-center justify-center text-white font-bold text-lg ml-0 md:ml-6 mt-4 md:mt-0">
+                  2
+                </div>
+                <div className="flex-1 text-right md:text-left">
+                  <h4 className="text-xl font-bold text-[#2A2A2A] mb-2">
+                    Automated Evaluation
+                  </h4>
+                  <p className="text-[#5A5A5A] leading-relaxed">
+                    Using trained AI models, the system automatically evaluates
+                    answers — supporting both objective and subjective grading —
+                    based on rubrics or model answers.
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex flex-col md:flex-row items-start mb-16 relative">
+                <div className="flex-shrink-0 w-10 h-10 bg-[#F26257] rounded-full flex items-center justify-center text-white font-bold text-lg mr-6">
+                  3
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-xl font-bold text-[#2A2A2A] mb-2">
+                    Personalized Feedback
+                  </h4>
+                  <p className="text-[#5A5A5A] leading-relaxed">
+                    Each student receives targeted feedback on their strengths
+                    and areas for improvement. Tips and additional learning
+                    resources are included to guide students forward.
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 4 */}
+              <div className="flex flex-col md:flex-row-reverse items-start mb-16 relative">
+                <div className="flex-shrink-0 w-10 h-10 bg-[#F26257] rounded-full flex items-center justify-center text-white font-bold text-lg ml-0 md:ml-6 mt-4 md:mt-0">
+                  4
+                </div>
+                <div className="flex-1 text-right md:text-left">
+                  <h4 className="text-xl font-bold text-[#2A2A2A] mb-2">
+                    Teacher Dashboard
+                  </h4>
+                  <p className="text-[#5A5A5A] leading-relaxed">
+                    Teachers use a dashboard to review AI-generated results,
+                    make corrections if needed, and communicate with students.
+                    It’s a central hub for managing learning.
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 5 */}
+              <div className="flex flex-col md:flex-row items-start mb-16 relative">
+                <div className="flex-shrink-0 w-10 h-10 bg-[#F26257] rounded-full flex items-center justify-center text-white font-bold text-lg mr-6">
+                  5
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-xl font-bold text-[#2A2A2A] mb-2">
+                    Progress Analytics
+                  </h4>
+                  <p className="text-[#5A5A5A] leading-relaxed">
+                    The system tracks student progress over time and provides
+                    detailed insights to both students and teachers. It helps
+                    identify patterns and improve learning outcomes.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </section>
       </main>
+
+      {/* Footer */}
+      <footer className="bg-[#ECE5DB]  border-t border-gray-200">
+        <div className="container mx-auto px-4 md:px-8 text-center">
+          <p className="text-gray-700 text-sm">
+            © {new Date().getFullYear()} Score Lab. All rights reserved.
+          </p>
+          <div className="flex justify-center gap-4 mt-4">
+            <Link href="/privacy-policy" className="text-gray-700 hover:text-gray-900 text-sm">
+              Privacy Policy
+            </Link>
+            <Link href="/terms-of-service" className="text-gray-700 hover:text-gray-900 text-sm">
+              Terms of Service
+            </Link>
+            <Link href="/contact" className="text-gray-700 hover:text-gray-900 text-sm">
+              Contact Us
+            </Link>
+          </div>
+        </div>
+      </footer>
     </div>
-  )
+  );
 }

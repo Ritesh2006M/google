@@ -1,25 +1,25 @@
-"use client";
+"use client"
 
-import {useState} from "react";
-import {useRouter} from "next/navigation";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {ArrowLeft} from "lucide-react";
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ArrowLeft } from "lucide-react"
 
 export default function Registration() {
-    const router = useRouter();
-    const [form, setForm] = useState({regisNo: "", otp: ""});
+    const router = useRouter()
+    const [form, setForm] = useState({ regisNo: "", otp: "" })
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm({...form, [e.target.name]: e.target.value});
-    };
+        setForm({ ...form, [e.target.name]: e.target.value })
+    }
 
     const handleVerify = async () => {
         if (!form.regisNo) {
-            alert("Registration Number is required");
-            return;
+            alert("Registration Number is required")
+            return
         }
 
         try {
@@ -28,70 +28,72 @@ export default function Registration() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({regisNo: form.regisNo}),
-            });
+                body: JSON.stringify({ regisNo: form.regisNo }),
+            })
 
-            const data = await res.json();
+            const data = await res.json()
 
             if (data.success) {
-                localStorage.setItem("rollNo", form.regisNo);
-                localStorage.setItem("role", data.role);
+                localStorage.setItem("rollNo", form.regisNo)
+                localStorage.setItem("role", data.role)
 
                 if (data.role === "teacher") {
-                    router.push("/user/signup/teacher");
+                    router.push("/user/signup/teacher")
                 } else if (data.role === "student") {
-                    router.push("/user/signup/student");
+                    router.push("/user/signup/student")
                 } else {
-                    alert("Unknown role");
+                    alert("Unknown role")
                 }
             } else {
-                alert(data.message || "Verification failed");
+                alert(data.message || "Verification failed")
             }
         } catch (err) {
-            console.error("Error verifying:", err);
-            alert("Something went wrong");
+            console.error("Error verifying:", err)
+            alert("Something went wrong")
         }
-    };
-
+    }
 
     return (
-        <div className="flex min-h-screen items-center justify-center px-4 bg-white">
+        <div className="flex min-h-screen items-center justify-center px-4 bg-[#ECE5DB] py-10">
+            {/* Back Button */}
             <button
                 onClick={() => router.back()}
-                className="absolute top-4 left-4 flex items-center gap-2 text-gray-700 hover:text-black"
+                className="absolute top-6 left-6 flex items-center gap-2 text-[#6E6259] hover:text-black"
             >
-                <ArrowLeft size={20}/>
+                <ArrowLeft size={20} />
                 <span>Back</span>
             </button>
-            <Card className="w-full max-w-md p-6 shadow-lg rounded-lg bg-white border border-gray-300">
-                <CardHeader>
-                    <CardTitle className="text-center text-2xl font-semibold text-black">
+
+            <Card className="w-full max-w-md p-8 shadow-2xl rounded-2xl border border-[#D5CBBF] bg-[#F8F5F0] space-y-6">
+                <CardHeader className="pb-0">
+                    <CardTitle className="text-center text-3xl font-semibold text-[#4C443D]">
                         Verify Registration
                     </CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <div className="space-y-4">
-                        <div>
-                            <Label htmlFor="regisNo" className="text-black">
-                                Registration Number
-                            </Label>
-                            <Input
-                                id="regisNo"
-                                name="regisNo"
-                                type="text"
-                                placeholder="Enter your Registration Number"
-                                value={form.regisNo}
-                                onChange={handleChange}
-                                required
-                                className="border-gray-400 focus:border-black focus:ring-black"
-                            />
-                        </div>
-                        <Button className="w-full bg-black text-white hover:bg-gray-900" onClick={handleVerify}>
-                            Verify & Proceed
-                        </Button>
+                <CardContent className="space-y-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="regisNo" className="text-[#4C443D] text-sm">
+                            Registration Number
+                        </Label>
+                        <Input
+                            id="regisNo"
+                            name="regisNo"
+                            type="text"
+                            placeholder="Enter your Registration Number"
+                            value={form.regisNo}
+                            onChange={handleChange}
+                            required
+                            className="border-[#C4BBAF] focus:border-[#7A6F65] focus:ring-[#7A6F65] bg-white text-[#4C443D]"
+                        />
                     </div>
+                    <Button
+                        className="w-full bg-[#F26257] text-white hover:bg-[#645B52] h-11 rounded-xl text-base"
+                        onClick={handleVerify}
+                    >
+                        Verify & Proceed
+                    </Button>
                 </CardContent>
             </Card>
         </div>
-    );
+    )
 }
