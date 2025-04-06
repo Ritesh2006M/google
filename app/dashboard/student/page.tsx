@@ -66,37 +66,41 @@ export default function StudentDashboard() {
                   Profile Overview
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {student && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-600 dark:text-gray-300">
-                    <div>
-                      <span className="font-medium">Roll Number:</span>{" "}
-                      <span className="font-semibold text-[#000000] dark:text-[#FFFFFF]">{student.rollNo}</span>
+              <CardContent className="p-6">
+                <div className="flex flex-col lg:flex-row justify-between gap-6">
+                  {/* Left Section: Roll Number and Email */}
+                  {student && (
+                    <div className="space-y-4 text-gray-600 dark:text-gray-300">
+                      <div>
+                        <span className="font-medium">Roll Number</span>
+                        <p className="font-semibold text-[#000000] dark:text-[#FFFFFF]">{student.rollNo}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium">Email</span>
+                        <p className="font-semibold text-[#000000] dark:text-[#FFFFFF]">{student.student_email}</p>
+                      </div>
                     </div>
-                    <div>
-                      <span className="font-medium">Email:</span>{" "}
-                      <span className="font-semibold text-[#000000] dark:text-[#FFFFFF]">{student.student_email}</span>
+                  )}
+                  {/* Right Section: Subjects */}
+                  {subjects.length > 0 && (
+                    <div className="space-y-3 text-right">
+                      <span className="font-medium text-gray-600 dark:text-gray-300 block">
+                        Subjects
+                      </span>
+                      <div className="flex flex-wrap justify-end gap-2">
+                        {subjects.map((subj, index) => (
+                          <Badge
+                            key={index}
+                            variant="secondary"
+                            className="bg-gray-200 text-[#000000] dark:bg-gray-700 dark:text-[#FFFFFF] px-3 py-1 rounded-full"
+                          >
+                            {subj.subject_name}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-                {subjects.length > 0 && (
-                  <div className="space-y-2">
-                    <span className="font-medium text-gray-600 dark:text-gray-300 block text-center">
-                      Subjects:
-                    </span>
-                    <div className="flex flex-wrap justify-center gap-2">
-                      {subjects.map((subj, index) => (
-                        <Badge
-                          key={index}
-                          variant="secondary"
-                          className="bg-gray-200 text-[#000000] dark:bg-gray-700 dark:text-[#FFFFFF] px-3 py-1 rounded-full"
-                        >
-                          {subj.subject_name}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </CardContent>
             </Card>
           )}
