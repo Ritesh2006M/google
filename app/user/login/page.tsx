@@ -63,6 +63,7 @@ export default function LoginPage() {
     }
 
     const handleGoogleLogin = () => {
+        alert("Demo Website (Firebase not setup)")
         console.log("Sign in with Google")
     }
 
@@ -142,7 +143,7 @@ export default function LoginPage() {
                             }}
                             onClick={handleLogin}
                         >
-                            Sign In
+                            Log In
                         </Button>
 
                         <button

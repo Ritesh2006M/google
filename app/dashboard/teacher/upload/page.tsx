@@ -144,178 +144,184 @@ export default function UploadAssignment() {
       </div>
 
       {/* Sidebar */}
-      <div className="w-72 bg-white/80 dark:bg-[#1A1A1A]/80 backdrop-blur-md border-r border-gray-300/50 dark:border-gray-800/50 shadow-lg">
-        <TeacherSidebar />
+      <div
+          className="w-72 fixed top-0 left-0 h-screen bg-white/80 dark:bg-[#1A1A1A]/80 backdrop-blur-md border-r border-gray-300/50 dark:border-gray-800/50 shadow-lg z-50">
+        <TeacherSidebar/>
       </div>
 
+
       {/* Main Content */}
-      <main className="flex-1 p-10 overflow-y-auto">
+      <main className="flex-1 p-10 overflow-y-auto ml-72">
+
         <div className="max-w-3xl mx-auto space-y-8">
           {/* Header */}
-          <Card className="p-6 bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-sm border border-gray-300/50 dark:border-gray-700/50 rounded-3xl shadow-md">
+          <Card
+              className="p-6 bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-sm border border-gray-300/50 dark:border-gray-700/50 rounded-3xl shadow-md">
             <h1 className="text-3xl font-bold text-[#000000] dark:text-[#FFFFFF] tracking-tight text-center">
               Upload Assignment
             </h1>
           </Card>
 
           {/* Assignment Question */}
-          <Card className="p-6 bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-sm border border-gray-300/50 dark:border-gray-700/50 rounded-3xl shadow-md hover:shadow-lg transition-all duration-300">
+          <Card
+              className="p-6 bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-sm border border-gray-300/50 dark:border-gray-700/50 rounded-3xl shadow-md hover:shadow-lg transition-all duration-300">
             <div className="space-y-4">
               <label className="text-lg font-semibold text-[#000000] dark:text-[#FFFFFF] block">
                 Assignment Question
               </label>
               <Textarea
-                value={assignmentQuestion}
-                onChange={(e) => setAssignmentQuestion(e.target.value)}
-                placeholder="Type your assignment question here..."
-                className="w-full resize-none min-h-[100px] bg-transparent border-gray-300 dark:border-gray-600 text-[#000000] dark:text-[#FFFFFF] rounded-xl"
-                onInput={(e) => {
-                  e.currentTarget.style.height = "auto";
-                  e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
-                }}
+                  value={assignmentQuestion}
+                  onChange={(e) => setAssignmentQuestion(e.target.value)}
+                  placeholder="Type your assignment question here..."
+                  className="w-full resize-none min-h-[100px] bg-transparent border-gray-300 dark:border-gray-600 text-[#000000] dark:text-[#FFFFFF] rounded-xl"
+                  onInput={(e) => {
+                    e.currentTarget.style.height = "auto";
+                    e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
+                  }}
               />
             </div>
           </Card>
 
           {/* File Upload with Drag-and-Drop */}
           <Card
-            className={`p-6 bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-sm border border-gray-300/50 dark:border-gray-700/50 rounded-3xl shadow-md hover:shadow-lg transition-all duration-300 ${
-              isDragging ? "border-dashed border-2 border-gray-500" : ""
-            }`}
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
+              className={`p-6 bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-sm border border-gray-300/50 dark:border-gray-700/50 rounded-3xl shadow-md hover:shadow-lg transition-all duration-300 ${
+                  isDragging ? "border-dashed border-2 border-gray-500" : ""
+              }`}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
           >
             <div className="space-y-4">
               <label className="text-lg font-semibold text-[#000000] dark:text-[#FFFFFF] block">
-                Upload Assignment File (PDF) <span className="text-gray-500 dark:text-gray-400 text-sm">(Optional)</span>
+                Upload Assignment File <span className="text-gray-500 dark:text-gray-400 text-sm">(PDFs)</span>
               </label>
               {!selectedFile ? (
-                <div className="flex flex-col items-center justify-center space-y-4">
-                  <Upload className="w-10 h-10 text-gray-500 dark:text-gray-400" />
-                  <p className="text-gray-600 dark:text-gray-300 text-center">
-                    Drag and drop a PDF here or{" "}
-                    <label
-                      htmlFor="file-upload"
-                      className="underline cursor-pointer hover:text-gray-800 dark:hover:text-gray-200"
-                    >
-                      browse
-                    </label>
-                  </p>
-                  <Input
-                    id="file-upload"
-                    type="file"
-                    accept="application/pdf"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                </div>
+                  <div className="flex flex-col items-center justify-center space-y-4">
+                    <Upload className="w-10 h-10 text-gray-500 dark:text-gray-400"/>
+                    <p className="text-gray-600 dark:text-gray-300 text-center">
+                      Drag and drop a PDF here or{" "}
+                      <label
+                          htmlFor="file-upload"
+                          className="underline cursor-pointer hover:text-gray-800 dark:hover:text-gray-200"
+                      >
+                        browse
+                      </label>
+                    </p>
+                    <Input
+                        id="file-upload"
+                        type="file"
+                        accept="application/pdf"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        className="hidden"
+                    />
+                  </div>
               ) : (
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-gray-600 dark:text-gray-300 truncate flex-1">
-                    <strong>Selected:</strong> {selectedFile.name}
-                  </p>
-                  <Button
-                    onClick={() => {
-                      setSelectedFile(null);
-                      if (fileInputRef.current) fileInputRef.current.value = "";
-                    }}
-                    className="bg-[#000000] text-white hover:bg-gray-800 dark:bg-[#FFFFFF] dark:text-black dark:hover:bg-gray-200 px-4 py-2 rounded-full"
-                  >
-                    Delete
-                  </Button>
-                </div>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-gray-600 dark:text-gray-300 truncate flex-1">
+                      <strong>Selected:</strong> {selectedFile.name}
+                    </p>
+                    <Button
+                        onClick={() => {
+                          setSelectedFile(null);
+                          if (fileInputRef.current) fileInputRef.current.value = "";
+                        }}
+                        className="bg-[#000000] text-white hover:bg-gray-800 dark:bg-[#FFFFFF] dark:text-black dark:hover:bg-gray-200 px-4 py-2 rounded-full"
+                    >
+                      Delete
+                    </Button>
+                  </div>
               )}
             </div>
           </Card>
 
           {/* Auto Evaluation & Criteria */}
-          <Card className="p-6 bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-sm border border-gray-300/50 dark:border-gray-700/50 rounded-3xl shadow-md hover:shadow-lg transition-all duration-300">
+          <Card
+              className="p-6 bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-sm border border-gray-300/50 dark:border-gray-700/50 rounded-3xl shadow-md hover:shadow-lg transition-all duration-300">
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-semibold text-[#000000] dark:text-[#FFFFFF]">
                   Auto Evaluation
                 </span>
-                <Switch checked={isAutoEvaluation} onCheckedChange={setIsAutoEvaluation} />
+                <Switch checked={isAutoEvaluation} onCheckedChange={setIsAutoEvaluation}/>
               </div>
-              <hr className="border-gray-300 dark:border-gray-600" />
+              <hr className="border-gray-300 dark:border-gray-600"/>
               {isAutoEvaluation ? (
-                <div className="space-y-4">
-                  <label className="text-md font-medium text-[#000000] dark:text-[#FFFFFF] block">
-                    Max Auto Evaluation Marks
-                  </label>
-                  <Input
-                    type="number"
-                    placeholder="Max Marks"
-                    value={maxAutoMarks || ""}
-                    onChange={(e) => {
-                      let numValue = e.target.value;
-                      if (numValue === "") setMaxAutoMarks(0);
-                      let num = Number(numValue);
-                      if (!isNaN(num) && num >= 0) setMaxAutoMarks(num);
-                    }}
-                    className="w-1/3 bg-transparent border-gray-300 dark:border-gray-600 text-[#000000] dark:text-[#FFFFFF] rounded-xl"
-                  />
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <h2 className="text-lg font-semibold text-[#000000] dark:text-[#FFFFFF]">Evaluation Criteria</h2>
-                  {criteria.map((criterion, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <Textarea
-                        placeholder="Enter criterion (e.g., Clarity)"
-                        value={criterion.name}
-                        onChange={(e) => updateCriteria(index, "name", e.target.value)}
-                        className="flex-1 resize-none min-h-[40px] bg-transparent border-gray-300 dark:border-gray-600 text-[#000000] dark:text-[#FFFFFF] rounded-xl"
-                        onInput={(e) => {
-                          e.currentTarget.style.height = "auto";
-                          e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
-                        }}
-                      />
-                      <Input
+                  <div className="space-y-4">
+                    <label className="text-md font-medium text-[#000000] dark:text-[#FFFFFF] block">
+                      Max Auto Evaluation Marks
+                    </label>
+                    <Input
                         type="number"
-                        placeholder="Marks"
-                        value={criterion.marks || ""}
-                        onChange={(e) => updateCriteria(index, "marks", e.target.value)}
-                        className="w-24 bg-transparent border-gray-300 dark:border-gray-600 text-[#000000] dark:text-[#FFFFFF] rounded-xl"
-                      />
-                      <Button
-                        onClick={() => removeCriteria(index)}
-                        className="bg-[#000000] text-white hover:bg-gray-800 dark:bg-[#FFFFFF] dark:text-black dark:hover:bg-gray-200 p-2 rounded-full"
-                        disabled={criteria.length === 1}
-                      >
-                        <Trash className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                  <Button
-                    onClick={addCriteria}
-                    className="w-full bg-[#000000] text-white hover:bg-gray-800 dark:bg-[#FFFFFF] dark:text-black dark:hover:bg-gray-200 px-4 py-2 rounded-full"
-                  >
-                    + Add Criterion
-                  </Button>
-                  <div className="text-md font-medium text-[#000000] dark:text-[#FFFFFF] text-center">
-                    Total Marks: {totalMarks}
+                        placeholder="Max Marks"
+                        value={maxAutoMarks || ""}
+                        onChange={(e) => {
+                          let numValue = e.target.value;
+                          if (numValue === "") setMaxAutoMarks(0);
+                          let num = Number(numValue);
+                          if (!isNaN(num) && num >= 0) setMaxAutoMarks(num);
+                        }}
+                        className="w-1/3 bg-transparent border-gray-300 dark:border-gray-600 text-[#000000] dark:text-[#FFFFFF] rounded-xl"
+                    />
                   </div>
-                </div>
+              ) : (
+                  <div className="space-y-4">
+                    <h2 className="text-lg font-semibold text-[#000000] dark:text-[#FFFFFF]">Evaluation Criteria</h2>
+                    {criteria.map((criterion, index) => (
+                        <div key={index} className="flex items-center gap-3">
+                          <Textarea
+                              placeholder="Enter criterion (e.g., Clarity)"
+                              value={criterion.name}
+                              onChange={(e) => updateCriteria(index, "name", e.target.value)}
+                              className="flex-1 resize-none min-h-[40px] bg-transparent border-gray-300 dark:border-gray-600 text-[#000000] dark:text-[#FFFFFF] rounded-xl"
+                              onInput={(e) => {
+                                e.currentTarget.style.height = "auto";
+                                e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
+                              }}
+                          />
+                          <Input
+                              type="number"
+                              placeholder="Marks"
+                              value={criterion.marks || ""}
+                              onChange={(e) => updateCriteria(index, "marks", e.target.value)}
+                              className="w-24 bg-transparent border-gray-300 dark:border-gray-600 text-[#000000] dark:text-[#FFFFFF] rounded-xl"
+                          />
+                          <Button
+                              onClick={() => removeCriteria(index)}
+                              className="bg-[#000000] text-white hover:bg-gray-800 dark:bg-[#FFFFFF] dark:text-black dark:hover:bg-gray-200 p-2 rounded-full"
+                              disabled={criteria.length === 1}
+                          >
+                            <Trash className="h-4 w-4"/>
+                          </Button>
+                        </div>
+                    ))}
+                    <Button
+                        onClick={addCriteria}
+                        className="w-full bg-[#000000] text-white hover:bg-gray-800 dark:bg-[#FFFFFF] dark:text-black dark:hover:bg-gray-200 px-4 py-2 rounded-full"
+                    >
+                      + Add Criterion
+                    </Button>
+                    <div className="text-md font-medium text-[#000000] dark:text-[#FFFFFF] text-center">
+                      Total Marks: {totalMarks}
+                    </div>
+                  </div>
               )}
             </div>
           </Card>
 
           {/* Upload Button */}
           <Button
-            onClick={handleUpload}
-            className="w-full bg-[#000000] text-white hover:bg-gray-800 dark:bg-[#FFFFFF] dark:text-black dark:hover:bg-gray-200 px-6 py-3 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300"
-            disabled={loading}
+              onClick={handleUpload}
+              className="w-full bg-[#000000] text-white hover:bg-gray-800 dark:bg-[#FFFFFF] dark:text-black dark:hover:bg-gray-200 px-6 py-3 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300"
+              disabled={loading}
           >
             {loading ? (
-              <>
-                <Loader2 className="animate-spin mr-2 h-5 w-5" />
-                Uploading...
-              </>
+                <>
+                  <Loader2 className="animate-spin mr-2 h-5 w-5"/>
+                  Uploading...
+                </>
             ) : (
-              "Upload Assignment"
+                "Upload Assignment"
             )}
           </Button>
         </div>

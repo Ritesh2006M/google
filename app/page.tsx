@@ -238,13 +238,13 @@ export default function Home() {
             © {new Date().getFullYear()} Score Lab. All rights reserved.
           </p>
           <div className="flex justify-center gap-6 mt-6">
-            <Link href="/privacy-policy" className="text-gray-700 hover:text-gray-900 text-base">
+            <Link href="/" className="text-gray-700 hover:text-gray-900 text-base">
               Privacy Policy
             </Link>
-            <Link href="/terms-of-service" className="text-gray-700 hover:text-gray-900 text-base">
+            <Link href="/" className="text-gray-700 hover:text-gray-900 text-base">
               Terms of Service
             </Link>
-            <Link href="/contact" className="text-gray-700 hover:text-gray-900 text-base">
+            <Link href="/" className="text-gray-700 hover:text-gray-900 text-base">
               Contact Us
             </Link>
           </div>
