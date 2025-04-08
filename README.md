@@ -144,7 +144,7 @@ google/
 
 ## Links 🌐
 - **GitHub Repository**: [https://github.com/Ritesh2006M/google](https://github.com/Ritesh2006M/google) 📂
-- **Demo Video**: [Google Drive Folder](https://drive.google.com/drive/folders/1uspkeuLp69iLn3VBU299GXkU3lx9il?usp=sharing) 🎥
+- **Demo Video**: [Video](https://drive.google.com/drive/folders/1juSpKeuLp69iLn3VBU-Z59GXkJ3lx9lI?usp=sharing) 🎥
 - **MVP**: [https://scorelab.app/](https://scorelab.app/) 🌍
 
 ---
