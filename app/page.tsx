@@ -67,13 +67,13 @@ export default function Home() {
                 insights.
               </p>
               <div className="flex gap-6 animate-fade-in animation-delay-400">
-                <Link href="/how-it-works">
+                <Link href="/user/login">
                   <Button className="px-10 py-4 bg-[#F26257] text-white rounded-full flex items-center group hover:shadow-xl transition-all duration-300 text-lg">
                     See How It Works
                     <ArrowRight className="ml-3 w-6 h-6 transform group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
-                <Link href="/demo">
+                <Link href="/user/login">
                   <Button
                     variant="outline"
                     className="px-10 py-4 border-[#F26257] text-[#F26257] hover:bg-blue-50 rounded-full transition-all duration-300 text-lg"
@@ -153,8 +153,8 @@ export default function Home() {
                   </h4>
                   <p className="text-lg text-[#5A5A5A] leading-relaxed">
                     Students upload their handwritten or typed assignments as
-                    image or PDF files. OCR and CV modules convert them into
-                    machine-readable formats for further processing.
+                    PDF files. Document AI convert them into
+                    text formats for further processing.
                   </p>
                 </div>
               </div>
@@ -169,7 +169,7 @@ export default function Home() {
                     Automated Evaluation
                   </h4>
                   <p className="text-lg text-[#5A5A5A] leading-relaxed">
-                    Using trained AI models, the system automatically evaluates
+                    Using Gemini API, the system automatically evaluates
                     answers — supporting both objective and subjective grading —
                     based on rubrics or model answers.
                   </p>
